@@ -1,0 +1,13 @@
+name = "CSGBuilding"
+uuid = "a69a8ca4-c74f-409f-8e6c-efe80ff0e05d"
+authors = ["Tamás Cserteg"]
+version = "0.1.0"
+
+[compat]
+julia = "1"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]
