@@ -3,6 +3,11 @@ uuid = "a69a8ca4-c74f-409f-8e6c-efe80ff0e05d"
 authors = ["Tamás Cserteg"]
 version = "0.1.0"
 
+[deps]
+AbstractTrees = "1520ce14-60c1-5f80-bbc7-55ef81b5835c"
+LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
+StaticArrays = "90137ffa-7385-5640-81b9-e52037218182"
+
 [compat]
 julia = "1"
 

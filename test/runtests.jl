@@ -1,6 +1,9 @@
 using CSGBuilding
 using Test
+using StaticArrays: SVector
 
 @testset "CSGBuilding.jl" begin
-    # Write your own tests here.
+    @testset "Implicit sphere tests" begin
+        include("implspheretests.jl")
+    end
 end
