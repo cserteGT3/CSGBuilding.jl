@@ -1,7 +1,7 @@
 module CSGBuilding
 
 using AbstractTrees
-using LinearAlgebra: dot
+using LinearAlgebra: dot, norm, normalize
 using StaticArrays: SVector
 
 export  CSGNode,

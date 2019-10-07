@@ -25,7 +25,7 @@ const v0 = SVector(0.0, 0.0, 0.0)
     @test isapprox(evaluate(sphere3, SVector(5, 5, 0)), 0)
     @test isapprox(evaluate(sphere3, SVector(5.0, 5.0, 0.0)), 0)
     @test isapprox(evaluate(sphere3, SVector(5.0, 0.0, 5.0)), 0)
-    @test isapprox(evaluate(sphere3, SVector(5.0, 5.0, 0.0)), 0)
+    @test isapprox(evaluate(sphere3, SVector(0.0, 5.0, 5.0)), 0)
 end
 
 @testset "evaluating sphere node" begin
