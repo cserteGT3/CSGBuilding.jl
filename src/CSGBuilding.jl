@@ -14,8 +14,11 @@ export  complement,
         subtraction,
         union
 
+export  writeparaviewformat
+
 include("implicitsurfaces.jl")
 include("csgtrees.jl")
 include("operations.jl")
+include("visualize.jl")
 
 end # module
