@@ -39,16 +39,19 @@ end
 @testset "set operations on sphere" begin
     @testset "complement" begin
         sphere1 = ImplicitSphere(v0, 1.0)
-        node1 = CSGNode(CSGBuilding.complement, (sphere1, ))
+        sp1node = CSGNode(sphere1, ())
 
-        @test isapprox(evaluate(node1, v0), 1)
-        @test isapprox(evaluate(node1, SVector(1, 0, 0)), 0)
+        @test isapprox(evaluate(sp1node, v0), -1)
+        @test isapprox(evaluate(sp1node, SVector(1, 0, 0)), 0)
     end
 
     @testset "intersection" begin
         sphere1 = ImplicitSphere(v0, 1.0)
         sphere2 = ImplicitSphere(v0, 5.0)
-        node1 = CSGNode(CSGBuilding.intersection, (sphere1, sphere2))
+        sp1node = CSGNode(sphere1, ())
+        sp2node = CSGNode(sphere2, ())
+
+        node1 = CSGNode(CSGBuilding.intersection, (sp1node, sp2node))
 
         @test evaluate(node1, v0) < 0
         @test evaluate(node1, SVector(100,0,0)) > 0
@@ -57,9 +60,12 @@ end
     @testset "subtraction" begin
         sphere1 = ImplicitSphere(v0, 1.0)
         sphere2 = ImplicitSphere(v0, 5.0)
-        node1 = CSGNode(CSGBuilding.intersection, (sphere2, sphere1))
+        sp1node = CSGNode(sphere1, ())
+        sp2node = CSGNode(sphere2, ())
+
+        node1 = CSGNode(CSGBuilding.subtraction, (sp1node, sp2node))
 
         @test evaluate(node1, v0) < 0
-        @test evaluate(node1, SVector(100,0,0)) > 0
+        @test evaluate(node1, SVector(100,0,0)) < 0
     end
 end

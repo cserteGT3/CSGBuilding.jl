@@ -14,8 +14,8 @@ export  complement,
         subtraction,
         union
 
-include("csgtrees.jl")
 include("implicitsurfaces.jl")
+include("csgtrees.jl")
 include("operations.jl")
 
 end # module
