@@ -73,7 +73,7 @@ end
 
         node1 = CSGNode(CSGBuilding.subtraction, (sp1node, sp2node))
 
-        @test evaluate(node1, v0) < 0
-        @test evaluate(node1, SVector(100,0,0)) < 0
+        @test evaluate(node1, v0) > 0
+        @test evaluate(node1, SVector(100,0,0)) > 0
     end
 end
