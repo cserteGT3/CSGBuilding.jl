@@ -6,8 +6,8 @@ const v0 = SVector(0.0, 0.0, 0.0)
         sp1node = CSGNode(sphere1, ())
         compnode = CSGNode(CSGBuilding.complement, (sp1node, ))
 
-        @test isapprox(evaluate(compnode, SVector(-1.0, -1.0, -1.0)), 1)
-        @test isapprox(evaluate(compnode, SVector(-1, -1, 0)), 0)
+        @test isapprox(value(evaluate(compnode, SVector(-1.0, -1.0, -1.0))), 1)
+        @test isapprox(value(evaluate(compnode, SVector(-1, -1, 0))), 0)
     end
 
     @testset "intersection" begin
@@ -18,8 +18,8 @@ const v0 = SVector(0.0, 0.0, 0.0)
 
         node1 = CSGNode(CSGBuilding.intersection, (sp1node, sp2node))
 
-        @test evaluate(node1, v0) < 0
-        @test evaluate(node1, SVector(100,0,0)) > 0
+        @test value(evaluate(node1, v0)) < 0
+        @test value(evaluate(node1, SVector(100,0,0))) > 0
     end
 
     @testset "subtraction" begin
@@ -30,8 +30,8 @@ const v0 = SVector(0.0, 0.0, 0.0)
 
         node1 = CSGNode(CSGBuilding.subtraction, (sp1node, sp2node))
 
-        @test evaluate(node1, v0) > 0
-        @test evaluate(node1, SVector(100,0,0)) > 0
+        @test value(evaluate(node1, v0)) > 0
+        @test value(evaluate(node1, SVector(100,0,0))) > 0
     end
 end
 
@@ -68,21 +68,21 @@ end
 
     @testset "on surface" begin
         for n in unitps
-            @test isapprox(evaluate(cubetree, n), 0)
+            @test isapprox(value(evaluate(cubetree, n)), 0)
         end
     end
 
     @testset "over surface" begin
         for n in unitps
             newp = 1.0001*n
-            @test evaluate(cubetree, newp) > 0
+            @test value(evaluate(cubetree, newp)) > 0
         end
     end
 
     @testset "under surface" begin
         for n in unitps
             newp = 0.9999*n
-            @test evaluate(cubetree, newp) < 0
+            @test value(evaluate(cubetree, newp)) < 0
         end
     end
 
@@ -90,15 +90,15 @@ end
 
     @testset "inside the cube" begin
         for i in 1:10
-            @test evaluate(cubetree, rand(SVector{3})) < 0
+            @test value(evaluate(cubetree, rand(SVector{3}))) < 0
         end
     end
 
     @testset "outside the cube" begin
         for i in 1:10
             direction = 1.0001*sqrt(3)*normalize(rand(SVector{3}))
-            @test evaluate(cubetree, direction) > 0
+            @test value(evaluate(cubetree, direction)) > 0
         end
     end
-    
+
 end

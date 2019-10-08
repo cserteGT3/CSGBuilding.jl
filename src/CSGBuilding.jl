@@ -8,12 +8,9 @@ export  CSGNode,
         evaluate
 
 export  ImplicitSphere,
-        ImplicitPlane
-
-export  complement,
-        intersection,
-        subtraction,
-        union
+        ImplicitPlane,
+        ImplicitResult,
+        value
 
 export  writeparaviewformat
 

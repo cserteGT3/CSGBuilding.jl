@@ -5,48 +5,48 @@ const v0 = SVector(0.0, 0.0, 0.0)
     @test sphere1.center == v0
     @test sphere1.radius == 1.0
 
-    @test isapprox(evaluate(sphere1, v0), -1)
+    @test isapprox(value(evaluate(sphere1, v0)), -1)
 
-    @test isapprox(evaluate(sphere1, SVector(1, 0, 0)), 0)
-    @test isapprox(evaluate(sphere1, SVector(1.0, 0.0, 0.0)), 0)
-    @test isapprox(evaluate(sphere1, SVector(0.0, 1.0, 0.0)), 0)
-    @test isapprox(evaluate(sphere1, SVector(0.0, 0.0, 1.0)), 0)
+    @test isapprox(value(evaluate(sphere1, SVector(1, 0, 0))), 0)
+    @test isapprox(value(evaluate(sphere1, SVector(1.0, 0.0, 0.0))), 0)
+    @test isapprox(value(evaluate(sphere1, SVector(0.0, 1.0, 0.0))), 0)
+    @test isapprox(value(evaluate(sphere1, SVector(0.0, 0.0, 1.0))), 0)
 
-    @test evaluate(sphere1, SVector(0, 0, 1.0001)) > 0
+    @test value(evaluate(sphere1, SVector(0, 0, 1.0001))) > 0
 
     sphere2 = ImplicitSphere(SVector(-1.0, -1.0, -1.0), 1.0)
-    @test isapprox(evaluate(sphere2, SVector(-1.0, -1.0, -1.0)), -1)
+    @test isapprox(value(evaluate(sphere2, SVector(-1.0, -1.0, -1.0))), -1)
 
-    @test isapprox(evaluate(sphere2, SVector(-1, -1, 0)), 0)
-    @test isapprox(evaluate(sphere2, SVector(-1.0, -1.0, 0.0)), 0)
-    @test isapprox(evaluate(sphere2, SVector(-1.0, 0.0, -1.0)), 0)
-    @test isapprox(evaluate(sphere2, SVector(-1.0, -1.0, 0.0)), 0)
+    @test isapprox(value(evaluate(sphere2, SVector(-1, -1, 0))), 0)
+    @test isapprox(value(evaluate(sphere2, SVector(-1.0, -1.0, 0.0))), 0)
+    @test isapprox(value(evaluate(sphere2, SVector(-1.0, 0.0, -1.0))), 0)
+    @test isapprox(value(evaluate(sphere2, SVector(-1.0, -1.0, 0.0))), 0)
 
-    @test evaluate(sphere2, SVector(0, 0, 0)) > 0
-    @test evaluate(sphere2, SVector(-1.0001, -1.0, 0.0)) > 0
+    @test value(evaluate(sphere2, SVector(0, 0, 0))) > 0
+    @test value(evaluate(sphere2, SVector(-1.0001, -1.0, 0.0))) > 0
 
     sphere3 = ImplicitSphere(SVector(5, 5, 5), 5)
 
-    @test isapprox(evaluate(sphere3, SVector(5, 5, 0)), 0)
-    @test isapprox(evaluate(sphere3, SVector(5.0, 5.0, 0.0)), 0)
-    @test isapprox(evaluate(sphere3, SVector(5.0, 0.0, 5.0)), 0)
-    @test isapprox(evaluate(sphere3, SVector(0.0, 5.0, 5.0)), 0)
+    @test isapprox(value(evaluate(sphere3, SVector(5, 5, 0))), 0)
+    @test isapprox(value(evaluate(sphere3, SVector(5.0, 5.0, 0.0))), 0)
+    @test isapprox(value(evaluate(sphere3, SVector(5.0, 0.0, 5.0))), 0)
+    @test isapprox(value(evaluate(sphere3, SVector(0.0, 5.0, 5.0))), 0)
 
-    @test evaluate(sphere3,SVector(0.0, 5.0001, 5.0)) > 0
+    @test value(evaluate(sphere3,SVector(0.0, 5.0001, 5.0))) > 0
 
     # Integer
     sphere4 = ImplicitSphere(SVector(0, 0, 0), 1)
-    @test isapprox(evaluate(sphere1, v0), -1)
+    @test isapprox(value(evaluate(sphere1, v0)), -1)
 end
 
 @testset "evaluating sphere node" begin
     sphere1 = ImplicitSphere(v0, 1.0)
     node1 = CSGNode(sphere1, ())
 
-    @test isapprox(evaluate(node1, v0), -1)
-    @test isapprox(evaluate(node1, SVector(1, 0, 0)), 0)
+    @test isapprox(value(evaluate(node1, v0)), -1)
+    @test isapprox(value(evaluate(node1, SVector(1, 0, 0))), 0)
 
-    @test evaluate(node1, SVector(0, 0, 1.0001)) > 0
+    @test value(evaluate(node1, SVector(0, 0, 1.0001))) > 0
 end
 
 @testset "evaluating plane" begin
@@ -56,20 +56,20 @@ end
     @test pl1.normal == n1
     @test pl1.point == n1
 
-    @test isapprox(evaluate(pl1, n1), 0)
-    @test isapprox(evaluate(pl1, SVector(0,0,0)), -1)
-    @test isapprox(evaluate(pl1, SVector(2,0,0)), 1)
+    @test isapprox(value(evaluate(pl1, n1)), 0)
+    @test isapprox(value(evaluate(pl1, SVector(0,0,0))), -1)
+    @test isapprox(value(evaluate(pl1, SVector(2,0,0))), 1)
 
-    @test evaluate(pl1, SVector(0.9999,0,0)) < 0
-    @test evaluate(pl1, SVector(1.0001,0,0)) > 0
+    @test value(evaluate(pl1, SVector(0.9999,0,0))) < 0
+    @test value(evaluate(pl1, SVector(1.0001,0,0))) > 0
 
-    @test isapprox(evaluate(pl1, SVector(1, 17.52, -37.12)), 0)
-    @test isapprox(evaluate(pl1, SVector(1, 9446.644, -151677.09)), 0)
+    @test isapprox(value(evaluate(pl1, SVector(1, 17.52, -37.12))), 0)
+    @test isapprox(value(evaluate(pl1, SVector(1, 9446.644, -151677.09))), 0)
 
-    @test evaluate(pl1, SVector(1.0001, 17.52, -37.12)) > 0
-    @test evaluate(pl1, SVector(1.0001, 9446.644, -151677.09)) > 0
+    @test value(evaluate(pl1, SVector(1.0001, 17.52, -37.12))) > 0
+    @test value(evaluate(pl1, SVector(1.0001, 9446.644, -151677.09))) > 0
 
 
-    @test evaluate(pl1, SVector(0.9999, 17.52, -37.12)) < 0
-    @test evaluate(pl1, SVector(0.9999, 9446.644, -151677.09)) < 0
+    @test value(evaluate(pl1, SVector(0.9999, 17.52, -37.12))) < 0
+    @test value(evaluate(pl1, SVector(0.9999, 9446.644, -151677.09))) < 0
 end
