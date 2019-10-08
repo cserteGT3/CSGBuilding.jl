@@ -14,3 +14,13 @@ end
 
 AbstractTrees.children(tree::CSGNode) = tree.children
 AbstractTrees.printnode(io::IO, tree::CSGNode) = print(io, tree.data)
+
+function normal(tree::CSGNode, coords::SVector{3})
+    return normal(evaluate(tree, coords), coords)
+end
+
+function valueandnormal(tree::CSGNode, coords::SVector{3})
+    val = evaluate(tree, coords)
+    n = normal(val, coords)
+    return (value(val), n)
+end

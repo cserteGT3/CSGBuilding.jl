@@ -4,13 +4,15 @@ using AbstractTrees
 using LinearAlgebra: dot, norm, normalize
 using StaticArrays: SVector
 
-export  CSGNode,
+export  ImplicitResult,
+        value,
+        normal,
+        ImplicitSphere,
+        ImplicitPlane,
         evaluate
 
-export  ImplicitSphere,
-        ImplicitPlane,
-        ImplicitResult,
-        value
+export  CSGNode,
+        valueandnormal
 
 export  writeparaviewformat
 

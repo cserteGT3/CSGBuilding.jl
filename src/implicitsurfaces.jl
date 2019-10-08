@@ -8,6 +8,10 @@ end
 
 value(result::ImplicitResult) = result.value
 
+function normal(result::ImplicitResult, coords::SVector{3})
+    return result.signint * normal(result.surface, coords)
+end
+
 Base.show(io::IO, result::ImplicitResult) =
     print(io, "ImplicitResult: $(result.surface), $(result.value)")
 
@@ -27,6 +31,16 @@ function evaluate(surface::ImplicitSphere, coords::SVector{3})
     return ImplicitResult(surface, val, 1)
 end
 
+function normal(surface::ImplicitSphere, coords::SVector{3})
+    val = evaluate(surface, coords)
+    dist = coords-surface.center
+    if ! isapprox(norm(dist), 0)
+        return normalize(coords-surface.center)
+    else
+        return convert(typeof(coords), [0,0,0])
+    end
+end
+
 struct ImplicitPlane{T<:Real} <: AbstractImplicitSurface
     point::SVector{3,T}
     normal::SVector{3,T}
@@ -38,3 +52,5 @@ function evaluate(surface::ImplicitPlane, coords::SVector{3})
     val = dot(coords-surface.point, surface.normal)
     return ImplicitResult(surface, val, 1)
 end
+
+normal(surface::ImplicitPlane, coords::SVector{3}) = surface.normal
