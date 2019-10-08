@@ -7,7 +7,8 @@ using StaticArrays: SVector
 export  CSGNode,
         evaluate
 
-export  ImplicitSphere
+export  ImplicitSphere,
+        ImplicitPlane
 
 export  complement,
         intersection,

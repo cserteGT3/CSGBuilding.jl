@@ -48,3 +48,28 @@ end
 
     @test evaluate(node1, SVector(0, 0, 1.0001)) > 0
 end
+
+@testset "evaluating plane" begin
+    n1 = SVector(1,0,0.0);
+    pl1 = ImplicitPlane(n1, n1)
+
+    @test pl1.normal == n1
+    @test pl1.point == n1
+
+    @test isapprox(evaluate(pl1, n1), 0)
+    @test isapprox(evaluate(pl1, SVector(0,0,0)), -1)
+    @test isapprox(evaluate(pl1, SVector(2,0,0)), 1)
+
+    @test evaluate(pl1, SVector(0.9999,0,0)) < 0
+    @test evaluate(pl1, SVector(1.0001,0,0)) > 0
+
+    @test isapprox(evaluate(pl1, SVector(1, 17.52, -37.12)), 0)
+    @test isapprox(evaluate(pl1, SVector(1, 9446.644, -151677.09)), 0)
+
+    @test evaluate(pl1, SVector(1.0001, 17.52, -37.12)) > 0
+    @test evaluate(pl1, SVector(1.0001, 9446.644, -151677.09)) > 0
+
+
+    @test evaluate(pl1, SVector(0.9999, 17.52, -37.12)) < 0
+    @test evaluate(pl1, SVector(0.9999, 9446.644, -151677.09)) < 0
+end
