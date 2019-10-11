@@ -1,5 +1,3 @@
-const v0 = SVector(0.0, 0.0, 0.0)
-
 @testset "set operations on sphere" begin
     @testset "complement" begin
         sphere1 = ImplicitSphere(SVector(-1.0, -1.0, -1.0), 1.0)

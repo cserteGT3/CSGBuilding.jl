@@ -1,5 +1,3 @@
-const v0 = SVector(0.0, 0.0, 0.0)
-
 @testset "evaluating sphere" begin
     sphere1 = ImplicitSphere(v0, 1.0)
     @test sphere1.center == v0
@@ -39,16 +37,6 @@ const v0 = SVector(0.0, 0.0, 0.0)
     @test isapprox(value(evaluate(sphere1, v0)), -1)
 end
 
-@testset "evaluating sphere node" begin
-    sphere1 = ImplicitSphere(v0, 1.0)
-    node1 = CSGNode(sphere1, ())
-
-    @test isapprox(value(evaluate(node1, v0)), -1)
-    @test isapprox(value(evaluate(node1, SVector(1, 0, 0))), 0)
-
-    @test value(evaluate(node1, SVector(0, 0, 1.0001))) > 0
-end
-
 @testset "evaluating plane" begin
     n1 = SVector(1,0,0.0);
     pl1 = ImplicitPlane(n1, n1)
@@ -72,4 +60,16 @@ end
 
     @test value(evaluate(pl1, SVector(0.9999, 17.52, -37.12))) < 0
     @test value(evaluate(pl1, SVector(0.9999, 9446.644, -151677.09))) < 0
+end
+
+@testset "surface normals" begin
+	@testset "plane" begin
+		n1 = SVector(1,0,0.0);
+		pl1 = ImplicitPlane(n1, n1)
+		
+		@test normal(pl1, v0) == n1
+		@test normal(pl1, rand(SVector{3})) == n1
+		@test isapprox(dot(normal(pl1, rand(SVector{3})), [1,0,0]), 1)
+	end
+	
 end
