@@ -70,6 +70,23 @@ end
 	@test cyl.axis == n1
 	@test cyl.radius == 1.
 
+	@test isapprox(value(evaluate(cyl, [1, 0, 0])), 0)
+	@test isapprox(value(evaluate(cyl, [0, 1, 0])), 0)
+	@test isapprox(value(evaluate(cyl, [-1, 0, 0])), 0)
+	@test isapprox(value(evaluate(cyl, [0, -1, 0])), 0)
+
+	@test isapprox(value(evaluate(cyl, [0, 0, 1])), -1)
+	@test isapprox(value(evaluate(cyl, [0, 0, -1])), -1)
+
+	@test value(evaluate(cyl, [1.0001, 0, 0])) > 0
+	@test value(evaluate(cyl, [0, 1.0001, 0])) > 0
+	@test value(evaluate(cyl, [-1.0001, 0, 0])) > 0
+	@test value(evaluate(cyl, [0, -1.0001, 0])) > 0
+
+	@test value(evaluate(cyl, [0.9999, 0, 0])) < 0
+	@test value(evaluate(cyl, [0, 0.9999, 0])) < 0
+	@test value(evaluate(cyl, [-0.9999, 0, 0])) < 0
+	@test value(evaluate(cyl, [0, -0.9999, 0])) < 0
 end
 
 
