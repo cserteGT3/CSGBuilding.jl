@@ -5,8 +5,9 @@ using Random
 using LinearAlgebra
 
 const v0 = SVector(0.0, 0.0, 0.0)
+const CSGB = CSGBuilding
 
-@testset "CSGBuilding.jl" begin  
+@testset "CSGBuilding.jl" begin
 	@testset "Implicit surfaces" begin
         include("implicitsurfaces.jl")
     end

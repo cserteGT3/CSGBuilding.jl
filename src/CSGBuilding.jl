@@ -13,7 +13,8 @@ export  ImplicitResult,
         evaluate
 
 export  CSGNode,
-        valueandnormal
+        valueandnormal,
+        depth
 
 export  writeparaviewformat
 

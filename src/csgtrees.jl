@@ -24,3 +24,23 @@ function valueandnormal(tree::CSGNode, coords)
     n = normal(val, coords)
     return (value(val), n)
 end
+
+function depth(tree::CSGNode)
+    childs = collect(children(tree))
+    i = 0
+    while true
+        if childs == fill((), size(childs))
+            return i
+        end
+        i += 1
+
+        newchilds = Array{CSGNode,1}(undef,0)
+        for a in childs
+            child_a = children(a)
+            if ! (child_a === ())
+                push!.(Ref(newchilds), collect(child_a))
+            end
+        end
+        childs = newchilds
+    end
+end
