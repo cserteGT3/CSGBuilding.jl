@@ -24,7 +24,7 @@ struct ImplicitSphere{T<:Real} <: AbstractImplicitSurface
     radius::T
 end
 
-Base.show(io::IO, surface::ImplicitSphere) = print(io, "Sphere: R$(surface.radius)")
+Base.show(io::IO, surface::ImplicitSphere) = print(io, "ImplSphere: R$(surface.radius)")
 
 function evaluate(surface::ImplicitSphere, coords::SVector{3})
     val = norm(coords-surface.center) - surface.radius
@@ -32,10 +32,9 @@ function evaluate(surface::ImplicitSphere, coords::SVector{3})
 end
 
 function normal(surface::ImplicitSphere, coords::SVector{3})
-    val = evaluate(surface, coords)
     dist = coords-surface.center
     if ! isapprox(norm(dist), 0)
-        return normalize(coords-surface.center)
+        return normalize(dist)
     else
         return convert(typeof(coords), [0,0,0])
     end
@@ -46,7 +45,7 @@ struct ImplicitPlane{T<:Real} <: AbstractImplicitSurface
     normal::SVector{3,T}
 end
 
-Base.show(io::IO, surface::ImplicitPlane) = print(io, "Plane: n$(surface.normal)")
+Base.show(io::IO, surface::ImplicitPlane) = print(io, "ImplPlane: n$(surface.normal)")
 
 function evaluate(surface::ImplicitPlane, coords::SVector{3})
     val = dot(coords-surface.point, surface.normal)
@@ -54,3 +53,39 @@ function evaluate(surface::ImplicitPlane, coords::SVector{3})
 end
 
 normal(surface::ImplicitPlane, coords::SVector{3}) = surface.normal
+
+struct ImplicitCylinder{T<:Real} <: AbstractImplicitSurface
+    axis::SVector{3,T}
+    center::SVector{3,T}
+    radius::T
+end
+
+"""
+    vectorfromline(p, d, q)
+
+Compute the vector directing from a line to `q` point.
+The line is defined by one point `p` and it's direction vector `d`.
+"""
+vectorfromline(p, d, q) = q-p-d*dot(q-p, d)
+
+function evaluate(surface::ImplicitCylinder, coords::SVector{3})
+    c = surface.center
+    a = surface.axis
+    val = norm(vectorfromline(c, a, coords)) - surface.radius
+    return ImplicitResult(surface, val, 1)
+end
+
+function normal(surface::ImplicitCylinder, coords::SVector{3})
+    c = surface.center
+    a = surface.axis
+    tnorm = vectorfromline(c, a, coords)
+    if ! isapprox(norm(tnorm), 0)
+        return normalize(tnorm)
+    else
+        return convert(typeof(coords), [0,0,0])
+    end
+end
+
+function Base.show(io::IO, surface::ImplicitCylinder)
+    return print(io, "ImplCylinder: R$(surface.radius)")
+end

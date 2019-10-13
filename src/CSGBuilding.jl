@@ -9,6 +9,7 @@ export  ImplicitResult,
         normal,
         ImplicitSphere,
         ImplicitPlane,
+        ImplicitCylinder,
         evaluate
 
 export  CSGNode,

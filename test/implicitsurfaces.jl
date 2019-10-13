@@ -62,14 +62,25 @@ end
     @test value(evaluate(pl1, SVector(0.9999, 9446.644, -151677.09))) < 0
 end
 
+@testset "evaluating cylinder" begin
+	n1 = SVector(0, 0, 1.0)
+	cyl = ImplicitCylinder(n1, v0, 1.)
+
+	@test cyl.center == v0
+	@test cyl.axis == n1
+	@test cyl.radius == 1.
+
+end
+
+
 @testset "surface normals" begin
 	@testset "plane" begin
 		n1 = SVector(1,0,0.0);
 		pl1 = ImplicitPlane(n1, n1)
-		
+
 		@test normal(pl1, v0) == n1
 		@test normal(pl1, rand(SVector{3})) == n1
 		@test isapprox(dot(normal(pl1, rand(SVector{3})), [1,0,0]), 1)
 	end
-	
+
 end
