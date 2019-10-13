@@ -31,7 +31,7 @@ function writeparaviewformat(surface, fname, ranget)
     voxels = Array{Float64}(undef, res, res, res)
     r = range(f, stop=t, length=res)
     for i in 1:res, j in 1:res, k in 1:res
-        voxels[i,j,k] = evaluate(surface, SVector{3}([r[i], r[j], r[k]]))
+        voxels[i,j,k] = value(evaluate(surface, SVector{3}([r[i], r[j], r[k]])))
     end
     write_volume(voxels, fname)
 end
