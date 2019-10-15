@@ -16,3 +16,5 @@ end
 function union(f::CSGNode, g::CSGNode, coords)
     return min(evaluate(f, coords), evaluate(g, coords))
 end
+
+const CSGOperations = [complement, intersection, subtraction, union]

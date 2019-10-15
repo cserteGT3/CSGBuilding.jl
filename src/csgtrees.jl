@@ -41,3 +41,22 @@ function depth(tree::CSGNode)
         childs = newchilds
     end
 end
+
+function make(surf, n)
+    if n == 0 || rand() > 0.7
+        return CSGNode(rand(surf), [])
+    else
+        # more recursive calls
+        op = rand(CSGOperations)
+        if op == complement
+            return CSGNode(op, [make(surf, n-1)])
+        else
+            return CSGNode(op, [make(surf, n-1), make(surf, n-1)])
+        end
+    end
+end
+
+function randomtree(surfaces, maxdepth::Int)
+    @assert maxdepth > 0 "Maximum depth should be at least 1!"
+    return make(surfaces, maxdepth)
+end

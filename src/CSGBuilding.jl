@@ -3,6 +3,7 @@ module CSGBuilding
 using AbstractTrees
 using LinearAlgebra: dot, norm, normalize
 using StaticArrays: SVector
+using Random
 
 export  ImplicitResult,
         value,
@@ -14,7 +15,8 @@ export  ImplicitResult,
 
 export  CSGNode,
         valueandnormal,
-        depth
+        depth,
+        randomtree
 
 export  writeparaviewformat
 
