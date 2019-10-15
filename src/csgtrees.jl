@@ -1,6 +1,6 @@
 struct CSGNode
     data::Union{AbstractImplicitSurface, Function}
-    children::Tuple{Vararg{CSGNode}}
+    children::Array{CSGNode,1}
 end
 
 function evaluate(tree::CSGNode, coords)
@@ -29,17 +29,14 @@ function depth(tree::CSGNode)
     childs = collect(children(tree))
     i = 0
     while true
-        if childs == fill((), size(childs))
+        if childs == fill([], size(childs))
             return i
         end
         i += 1
 
         newchilds = Array{CSGNode,1}(undef,0)
         for a in childs
-            child_a = children(a)
-            if ! (child_a === ())
-                push!.(Ref(newchilds), collect(child_a))
-            end
+            append!(newchilds, children(a))
         end
         childs = newchilds
     end

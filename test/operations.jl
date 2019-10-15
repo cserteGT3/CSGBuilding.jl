@@ -1,8 +1,8 @@
 @testset "set operations on sphere" begin
     @testset "complement" begin
         sphere1 = ImplicitSphere(SVector(-1.0, -1.0, -1.0), 1.0)
-        sp1node = CSGNode(sphere1, ())
-        compnode = CSGNode(CSGBuilding.complement, (sp1node, ))
+        sp1node = CSGNode(sphere1, [])
+        compnode = CSGNode(CSGBuilding.complement, [sp1node])
 
         @test isapprox(value(evaluate(compnode, SVector(-1.0, -1.0, -1.0))), 1)
         @test isapprox(value(evaluate(compnode, SVector(-1, -1, 0))), 0)
@@ -11,10 +11,10 @@
     @testset "intersection" begin
         sphere1 = ImplicitSphere(v0, 1.0)
         sphere2 = ImplicitSphere(v0, 5.0)
-        sp1node = CSGNode(sphere1, ())
-        sp2node = CSGNode(sphere2, ())
+        sp1node = CSGNode(sphere1, [])
+        sp2node = CSGNode(sphere2, [])
 
-        node1 = CSGNode(CSGBuilding.intersection, (sp1node, sp2node))
+        node1 = CSGNode(CSGBuilding.intersection, [sp1node, sp2node])
 
         @test value(evaluate(node1, v0)) < 0
         @test value(evaluate(node1, SVector(100,0,0))) > 0
@@ -23,10 +23,10 @@
     @testset "subtraction" begin
         sphere1 = ImplicitSphere(v0, 1.0)
         sphere2 = ImplicitSphere(v0, 5.0)
-        sp1node = CSGNode(sphere1, ())
-        sp2node = CSGNode(sphere2, ())
+        sp1node = CSGNode(sphere1, [])
+        sp2node = CSGNode(sphere2, [])
 
-        node1 = CSGNode(CSGBuilding.subtraction, (sp1node, sp2node))
+        node1 = CSGNode(CSGBuilding.subtraction, [sp1node, sp2node])
 
         @test value(evaluate(node1, v0)) > 0
         @test value(evaluate(node1, SVector(100,0,0))) > 0
@@ -39,28 +39,28 @@ end
     n3 = SVector(0,0,1.0);
 
     pl1 = ImplicitPlane(n1, n1)
-    pln1 = CSGNode(pl1, ())
+    pln1 = CSGNode(pl1, [])
 
     pl2 = ImplicitPlane(n2, n2)
-    pln2 = CSGNode(pl2, ())
+    pln2 = CSGNode(pl2, [])
 
     pl3 = ImplicitPlane(n3, n3)
-    pln3 = CSGNode(pl3, ())
+    pln3 = CSGNode(pl3, [])
 
     pl4 = ImplicitPlane(-n1, -n1)
-    pln4 = CSGNode(pl4, ())
+    pln4 = CSGNode(pl4, [])
 
     pl5 = ImplicitPlane(-n2, -n2)
-    pln5 = CSGNode(pl5, ())
+    pln5 = CSGNode(pl5, [])
 
     pl6= ImplicitPlane(-n3, -n3)
-    pln6 = CSGNode(pl6, ())
+    pln6 = CSGNode(pl6, [])
 
-    tr1 = CSGNode(CSGBuilding.intersection, (pln1, pln2))
-    tr2 = CSGNode(CSGBuilding.intersection, (pln3, pln4))
-    tr3 = CSGNode(CSGBuilding.intersection, (tr1, tr2))
-    tr4 = CSGNode(CSGBuilding.intersection, (tr3, pln5))
-    cubetree = CSGNode(CSGBuilding.intersection, (tr4, pln6))
+    tr1 = CSGNode(CSGBuilding.intersection, [pln1, pln2])
+    tr2 = CSGNode(CSGBuilding.intersection, [pln3, pln4])
+    tr3 = CSGNode(CSGBuilding.intersection, [tr1, tr2])
+    tr4 = CSGNode(CSGBuilding.intersection, [tr3, pln5])
+    cubetree = CSGNode(CSGBuilding.intersection, [tr4, pln6])
 
     unitps = [n1, n2, n3, -n1, -n2, -n3]
 
