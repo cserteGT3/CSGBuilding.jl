@@ -4,6 +4,7 @@
     χ = 0.3
     μ = 0.3
     maxdepth::Int = 10
+    μ_0 = 0.3
 end
 
 function rawscore(tree, points, normals, params)
@@ -40,7 +41,7 @@ end
 function crossover(creatures, params)
     @unpack χ, maxdepth = params
     if rand() >= χ
-        @info "rand() >= χ"
+        @debug "rand() >= χ"
         return creatures
     end
     creat_copy = deepcopy(creatures)
@@ -69,4 +70,42 @@ function crossover(creatures, params)
         end
     end
     return creat_copy
+end
+
+function mutate(creature, surfaces, params)
+    @unpack μ, μ_0, maxdepth = params
+
+    if rand() < μ
+        # return mutated
+        if rand() < μ_0
+            # return new tree
+            return randomtree(surfaces, maxdepth)
+        else
+            # mutate tree
+            creat_copy = deepcopy(creature)
+            podfs = PreOrderDFS(creat_copy)
+            nofnodes = numberofnodes(podfs)
+            randnode = rand(1:nofnodes)
+            selected_node = selectfirstchildnode(podfs, randnode)
+            nd = depth(selected_node)
+            newdepth = nd > 0 ? nd : 1
+            newnode = randomtree(surfaces, newdepth)
+            n = 0
+            for j in podfs
+                isempty(j.children) && continue
+                n += 1
+                if n == randnode
+                    j.children[1] = newnode
+                    break
+                end
+            end
+            if depth(creat_copy) > maxdepth
+                return creature
+            end
+            return creat_copy
+        end
+    else
+        # don't mutate tree
+        return creature
+    end
 end
