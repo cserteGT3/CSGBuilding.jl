@@ -85,6 +85,7 @@ function mutate(creature, surfaces, params)
             creat_copy = deepcopy(creature)
             podfs = PreOrderDFS(creat_copy)
             nofnodes = numberofnodes(podfs)
+            isempty(1:nofnodes) && return creature
             randnode = rand(1:nofnodes)
             selected_node = selectfirstchildnode(podfs, randnode)
             nd = depth(selected_node)
