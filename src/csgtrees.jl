@@ -42,6 +42,36 @@ function depth(tree::CSGNode)
     end
 end
 
+
+function treesize(tree::CSGNode)
+    s = 0
+    for _ in PreOrderDFS(tree)
+        s+=1
+    end
+    return s
+end
+
+function numberofnodes(it::AbstractTrees.TreeIterator)
+    n = 0
+    for i in it
+        isempty(i.children) && continue
+        n += 1
+    end
+    return n
+end
+
+function selectfirstchildnode(it::AbstractTrees.TreeIterator, ind)
+    n = 0
+    for i in it
+        isempty(i.children) && continue
+        n += 1
+        if n == ind
+            return i.children[1]
+        end
+    end
+    throw(BoundsError(it, ind))
+end
+
 function make(surf, n)
     if n == 0 || rand() > 0.7
         return CSGNode(rand(surf), [])
