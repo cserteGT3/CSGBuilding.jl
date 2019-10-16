@@ -5,6 +5,9 @@
     μ = 0.3
     maxdepth::Int = 10
     μ_0 = 0.3
+    itermax::Int = 3000
+    populationsize::Int = 150
+    keepbestn::Int = 2
 end
 
 function rawscore(tree, points, normals, params)
@@ -109,4 +112,27 @@ function mutate(creature, surfaces, params)
         # don't mutate tree
         return creature
     end
+end
+
+function geneticbuildtree(surfaces, points, normals, params)
+    @unpack itermax, maxdepth, populationsize = params
+    @unpack keepbestn = params
+    population = [randomtree(surfaces, maxdepth) for _ in 1:populationsize]
+    npopulation = similar(population)
+    for i in 1:itermax
+        population = rankpopulation(population, points, normals, params)
+        n = 3
+        while true
+            newc = crossover(population[1:2], params)
+            cv = mutate(newc[1], surfaces, params)
+            p[n] = c1v
+            n += 1
+            n > populationsize && break
+            cv = mutate(newc[2], surfaces, params)
+            p[n] = cv
+            n += 1
+            n > populationsize && break
+        end
+    end
+    return population
 end

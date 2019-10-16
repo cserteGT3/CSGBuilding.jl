@@ -26,7 +26,8 @@ export  writeparaviewformat
 export  CSGGeneticBuildParameters,
         rankpopulation,
         crossover,
-        mutate
+        mutate,
+        geneticbuildtree
 
 include("implicitsurfaces.jl")
 include("csgtrees.jl")
