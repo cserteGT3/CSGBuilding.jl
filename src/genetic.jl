@@ -139,7 +139,7 @@ function geneticbuildtree(surfaces, points, normals, params)
     for i in 1:itermax
         population = rankpopulation(population, points, normals, params)
         # save the best
-        newp[1:keepbestn] = population[1:keepbestn]
+        npopulation[1:keepbestn] = population[1:keepbestn]
         n = keepbestn+1
         while true
             # select 2 creatures by tournament
@@ -159,8 +159,8 @@ function geneticbuildtree(surfaces, points, normals, params)
             n += 1
             n > populationsize && break
         end
-        # newp is populated with a new set of creature
-        population = newp
+        # npopulation is populated with a new set of creature
+        population = npopulation
     end
     return population
 end
