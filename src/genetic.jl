@@ -1,13 +1,19 @@
 @with_kw struct CSGGeneticBuildParameters{R<:Real} @deftype R
+    # scoring
     ϵ_d = 0.01
     α = deg2rad(10)
+    # mutation and crossover
     χ = 0.3
     μ = 0.3
-    maxdepth::Int = 10
     μ_0 = 0.3
+    # tree & genetic iteration parameters
+    maxdepth::Int = 10
     itermax::Int = 3000
     populationsize::Int = 150
     keepbestn::Int = 2
+    # tournament selection
+    tournamentsize::Int = 30
+    selectionprob = 0.5
 end
 
 function rawscore(tree, points, normals, params)
@@ -37,7 +43,8 @@ function rankpopulation(population, points, normals, params)
     for i in eachindex(score)
         score[i] = normed[i]/sum
     end
-    p = sortperm(score)
+    # largest score is the first in the array
+    p = sortperm(score, rev=true)
     return population[p]
 end
 
@@ -113,6 +120,16 @@ function mutate(creature, surfaces, params)
         return creature
     end
 end
+function tournament(params)
+    # asserts that the population is sorted in descending order
+    @unpack tournamentsize, selectionprob, populationsize = params
+    tourn = [rand(1:populationsize) for _ in 1:tournamentsize]
+    sort!(tourn)
+    for ind in tourn
+        rand() < selectionprob && return ind
+    end
+    return tourn[1]
+end
 
 function geneticbuildtree(surfaces, points, normals, params)
     @unpack itermax, maxdepth, populationsize = params
@@ -121,18 +138,29 @@ function geneticbuildtree(surfaces, points, normals, params)
     npopulation = similar(population)
     for i in 1:itermax
         population = rankpopulation(population, points, normals, params)
-        n = 3
+        # save the best
+        newp[1:keepbestn] = population[1:keepbestn]
+        n = keepbestn+1
         while true
-            newc = crossover(population[1:2], params)
+            # select 2 creatures by tournament
+            t1 = deepcopy(population[tournament(params)])
+            t2 = deepcopy(population[tournament(params)])
+            # crossover them
+            newc = crossover([t1, t2], params)
+            # mutate first
             cv = mutate(newc[1], surfaces, params)
-            p[n] = c1v
+            npopulation[n] = cv
             n += 1
+            # finish if we have enough
             n > populationsize && break
+            # mutate second
             cv = mutate(newc[2], surfaces, params)
-            p[n] = cv
+            npopulation[n] = cv
             n += 1
             n > populationsize && break
         end
+        # newp is populated with a new set of creature
+        population = newp
     end
     return population
 end
