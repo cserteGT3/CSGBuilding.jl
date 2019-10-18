@@ -28,24 +28,29 @@ function rawscore(tree, points, normals, params)
         θ_i = acos(dot(n, normals[i]))/α
         score += exp(-d_i^2) + exp(-θ_i^2)
     end
-    return score - λ*size(tree)
+    return score - λ*treesize(tree)
 end
 
+using Base.Threads
 function rankpopulation(population, points, normals, params)
     sum = 0.
-    score = Array{Float64,1}(undef, size(points))
+    score = Array{Float64,1}(undef, size(population))
     normed = similar(score)
-    for i in eachindex(population)
+
+    @threads for i in eachindex(population)
         score[i] = rawscore(population[i], points, normals, params)
+    end
+    for i in eachindex(score)
         normed[i] = 1/(1+score[i])
         sum += normed[i]
     end
     for i in eachindex(score)
         score[i] = normed[i]/sum
     end
-    # largest score is the first in the array
-    p = sortperm(score, rev=true)
-    return population[p]
+    # this is the rescaled score
+
+    p = sortperm(score)
+    return population[p], score[p]
 end
 
 function crossover(creatures, params)
@@ -58,7 +63,7 @@ function crossover(creatures, params)
     podfs = PreOrderDFS.(creat_copy)
     nofnodes = numberofnodes.(podfs)
     @debug "nofnodes: $nofnodes"
-
+    (isempty(1:nofnodes[1]) || isempty(1:nofnodes[2])) && return creatures
     randnodes = map(x->rand(1:x), nofnodes)
     @debug "randnodes: $randnodes"
     changenodes = reverse(deepcopy(selectfirstchildnode.(podfs, randnodes)))
@@ -137,7 +142,9 @@ function geneticbuildtree(surfaces, points, normals, params)
     population = [randomtree(surfaces, maxdepth) for _ in 1:populationsize]
     npopulation = similar(population)
     for i in 1:itermax
-        population = rankpopulation(population, points, normals, params)
+        @info "$i-th iteration"
+        population, _ = rankpopulation(population, points, normals, params)
+        @info "ranked population"
         # save the best
         npopulation[1:keepbestn] = population[1:keepbestn]
         n = keepbestn+1

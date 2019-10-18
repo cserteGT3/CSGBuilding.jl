@@ -23,15 +23,15 @@ end
     n3 = SVector(0,0,1.0);
     v1 = SVector(0,0,0.0);
 
-    cyn =  ImplicitCylinder(SVector(0,0,1), SVector(0,0,0),1)
-    sf1 = ImplicitSphere(v1, 0.5)
-    sf2 = ImplicitSphere(v1, 1.0)
-    pl1 = ImplicitPlane(n1, n1)
-    pl2 = ImplicitPlane(n2, n2)
-    pl3 = ImplicitPlane(n3, n3)
-    pl4 = ImplicitPlane(-n1, -n1)
-    pl5 = ImplicitPlane(-n2, -n2)
-    pl6= ImplicitPlane(-n3, -n3)
+    cyn =  CSGNode(ImplicitCylinder(SVector(0,0,1), SVector(0,0,0),1), [])
+    sf1 = CSGNode(ImplicitSphere(v1, 0.5), [])
+    sf2 = CSGNode(ImplicitSphere(v1, 1.0), [])
+    pl1 = CSGNode(ImplicitPlane(n1, n1), [])
+    pl2 = CSGNode(ImplicitPlane(n2, n2), [])
+    pl3 = CSGNode(ImplicitPlane(n3, n3), [])
+    pl4 = CSGNode(ImplicitPlane(-n1, -n1), [])
+    pl5 = CSGNode(ImplicitPlane(-n2, -n2), [])
+    pl6 = CSGNode(ImplicitPlane(-n3, -n3), [])
 
     surfac = [cyn, sf1, sf2, pl1, pl2, pl3, pl4, pl5, pl6]
 

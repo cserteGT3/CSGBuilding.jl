@@ -74,7 +74,7 @@ end
 
 function make(surf, n)
     if n == 0 || rand() > 0.7
-        return CSGNode(rand(surf), [])
+        return rand(surf)
     else
         # more recursive calls
         op = rand(CSGOperations)
