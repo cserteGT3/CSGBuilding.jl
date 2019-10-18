@@ -31,13 +31,12 @@ function rawscore(tree, points, normals, params)
     return score - λ*treesize(tree)
 end
 
-using Base.Threads
 function rankpopulation(population, points, normals, params)
     sum = 0.
     score = Array{Float64,1}(undef, size(population))
     normed = similar(score)
 
-    @threads for i in eachindex(population)
+    for i in eachindex(population)
         score[i] = rawscore(population[i], points, normals, params)
     end
     for i in eachindex(score)
