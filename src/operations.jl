@@ -6,15 +6,24 @@ function complement(f::CSGNode, coords)
 end
 
 function intersection(f::CSGNode, g::CSGNode, coords)
-    return max(evaluate(f, coords), evaluate(g, coords))
+    gt = @spawn evaluate(g, coords)
+    ftr = evaluate(f, coords)
+    gtr = fetch(gt)
+    return max(ftr, gtr)
 end
 
 function subtraction(f::CSGNode, g::CSGNode, coords)
-    return max(evaluate(f, coords), complement(g, coords))
+    gt = @spawn complement(g, coords)
+    ftr = evaluate(f, coords)
+    gtr = fetch(gt)
+    return max(ftr, gtr)
 end
 
 function union(f::CSGNode, g::CSGNode, coords)
-    return min(evaluate(f, coords), evaluate(g, coords))
+    gt = @spawn evaluate(g, coords)
+    ftr = evaluate(f, coords)
+    gtr = fetch(gt)
+    return min(ftr, gtr)
 end
 
 const CSGOperations = [complement, intersection, subtraction, union]
