@@ -8,18 +8,21 @@ Base.show(io::IO, surface::CachedSurface) = print(io, surface.name)
 mutable struct CachedResult{F<:Real}
     value::F
     signint::Int
+    index::Int
 end
 
 value(result::CachedResult) = result.value
 
+Base.min(x::CachedResult, y::CachedResult) = ifelse(isless(x.value, y.value), x, y)
+Base.max(x::CachedResult, y::CachedResult) = ifelse(isless(y.value, x.value), x, y)
+
 function evaluate(surface::CachedSurface, cachedvalues, ind)
     val = cachedvalues[ind][surface.index]
-    return CachedResult(val, 1)
+    return CachedResult(val, 1, surface.index)
 end
 
-function normal(surface::CachedSurface, result::CachedResult, cachednormals, ind)
-    n = cachednormals[ind][surface.index]
-    return n*result.signint
+function normal(surface::CachedSurface, cachednormals, ind)
+    return cachednormals[ind][surface.index]
 end
 
 struct CachedCSGNode <: AbstractCSGNode
@@ -39,8 +42,11 @@ end
 AbstractTrees.children(tree::CachedCSGNode) = tree.children
 AbstractTrees.printnode(io::IO, tree::CachedCSGNode) = print(io, tree.data)
 
-Base.min(x::CachedResult, y::CachedResult) = ifelse(isless(x.value, y.value), x, y)
-Base.max(x::CachedResult, y::CachedResult) = ifelse(isless(y.value, x.value), x, y)
+function valueandnormal(tree::CachedCSGNode, ccoords, cnormals, ind)
+    val = evaluate(tree, ccoords, ind)
+    n = cnormals[ind][val.index]
+    return (value(val), n*val.signint)
+end
 
 function makecached(surf, n)
     if n == 0 || rand() > 0.7
@@ -49,9 +55,9 @@ function makecached(surf, n)
         # more recursive calls
         op = rand(CSGOperations)
         if op == complement
-            return CachedCSGNode(op, [make(surf, n-1)])
+            return CachedCSGNode(op, [makecached(surf, n-1)])
         else
-            return CachedCSGNode(op, [make(surf, n-1), make(surf, n-1)])
+            return CachedCSGNode(op, [makecached(surf, n-1), makecached(surf, n-1)])
         end
     end
 end
@@ -61,7 +67,7 @@ function randomcachedtree(nodes, maxdepth::Int)
     return makecached(nodes, maxdepth)
 end
 
-function buildcache(surfaces, points)
+function cachenodes(surfaces, points)
     cached_values = [[value(evaluate(f, p)) for f in surfaces] for p in points]
     cachedsurf = [CachedSurface(_name(surfaces[i])*"$i", i) for i in eachindex(surfaces)]
     nodes = [CachedCSGNode(s, []) for s in cachedsurf]
