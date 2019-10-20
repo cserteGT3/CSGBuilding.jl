@@ -252,13 +252,16 @@ end
 function cachedgeneticbuildtree(nodes, points, normals, params)
     @unpack itermax, maxdepth, populationsize = params
     @unpack keepbestn = params
+    notifit = div(itermax,10)
     cnodes, cvalues, cnormals = cachenodes(nodes, points)
     population = [randomcachedtree(cnodes, maxdepth) for _ in 1:populationsize]
     npopulation = similar(population)
     for i in 1:itermax
-        @info "$i-th iteration"
+        if i%notifit == 0
+            @info "$i-th iteration"
+        end
         population, _ = rankcachedpopulation(population, cvalues, cnormals, normals, params)
-        @info "ranked population"
+        @debug "ranked population"
         # save the best
         npopulation[1:keepbestn] = population[1:keepbestn]
         n = keepbestn+1
