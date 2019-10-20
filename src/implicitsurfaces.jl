@@ -31,6 +31,7 @@ function ImplicitSphere(center::AbstractArray, radius)
 end
 
 Base.show(io::IO, surface::ImplicitSphere) = print(io, "ImplSphere: R$(surface.radius)")
+_name(surface::ImplicitSphere) = "Sphere"
 
 function evaluate(surface::ImplicitSphere, coords)
     val = norm(coords-surface.center) - surface.radius
@@ -59,6 +60,7 @@ function ImplicitPlane(point::AbstractArray, normal::AbstractArray)
 end
 
 Base.show(io::IO, surface::ImplicitPlane) = print(io, "ImplPlane: n$(surface.normal)")
+_name(surface::ImplicitPlane) = "Plane"
 
 function evaluate(surface::ImplicitPlane, coords)
     val = dot(coords-surface.point, surface.normal)
@@ -109,3 +111,4 @@ end
 function Base.show(io::IO, surface::ImplicitCylinder)
     return print(io, "ImplCylinder: R$(surface.radius)")
 end
+_name(surface::ImplicitCylinder) = "Cylinder"

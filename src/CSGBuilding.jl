@@ -23,6 +23,12 @@ export  CSGNode,
         treesize,
         randomtree
 
+export  CachedCSGNode,
+        CachedSurface,
+        CachedResult,
+        randomcachedtree,
+        buildcache
+
 export  writeparaviewformat
 
 export  CSGGeneticBuildParameters,
@@ -33,6 +39,7 @@ export  CSGGeneticBuildParameters,
 
 include("implicitsurfaces.jl")
 include("csgtrees.jl")
+include("cachedtrees.jl")
 include("operations.jl")
 include("visualize.jl")
 include("genetic.jl")

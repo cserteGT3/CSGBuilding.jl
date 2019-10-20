@@ -27,3 +27,31 @@ function union(f::CSGNode, g::CSGNode, coords)
 end
 
 const CSGOperations = [complement, intersection, subtraction, union]
+
+function complement(f::CachedCSGNode, coords, ind)
+    ev = evaluate(f, coords, ind)
+    ev.signint = -1*ev.signint
+    ev.value = -1*ev.value
+    return ev
+end
+
+function intersection(f::CachedCSGNode, g::CachedCSGNode, coords, ind)
+    gt = @spawn evaluate(g, coords, ind)
+    ftr = evaluate(f, coords, ind)
+    gtr = fetch(gt)
+    return max(ftr, gtr)
+end
+
+function subtraction(f::CachedCSGNode, g::CachedCSGNode, coords, ind)
+    gt = @spawn complement(g, coords, ind)
+    ftr = evaluate(f, coords, ind)
+    gtr = fetch(gt)
+    return max(ftr, gtr)
+end
+
+function union(f::CachedCSGNode, g::CachedCSGNode, coords, ind)
+    gt = @spawn evaluate(g, coords, ind)
+    ftr = evaluate(f, coords, ind)
+    gtr = fetch(gt)
+    return min(ftr, gtr)
+end

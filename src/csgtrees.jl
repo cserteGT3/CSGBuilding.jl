@@ -1,4 +1,6 @@
-struct CSGNode
+abstract type AbstractCSGNode end
+
+struct CSGNode <: AbstractCSGNode
     data::Union{AbstractImplicitSurface, Function}
     children::Array{CSGNode,1}
 end
@@ -12,8 +14,8 @@ function evaluate(tree::CSGNode, coords)
     return setop(tree.children..., coords)
 end
 
-AbstractTrees.children(tree::CSGNode) = tree.children
-AbstractTrees.printnode(io::IO, tree::CSGNode) = print(io, tree.data)
+AbstractTrees.children(tree::AbstractCSGNode) = tree.children
+AbstractTrees.printnode(io::IO, tree::AbstractCSGNode) = print(io, tree.data)
 
 function normal(tree::CSGNode, coords)
     return normal(evaluate(tree, coords), coords)
@@ -25,7 +27,7 @@ function valueandnormal(tree::CSGNode, coords)
     return (value(val), n)
 end
 
-function depth(tree::CSGNode)
+function depth(tree::AbstractCSGNode)
     childs = collect(children(tree))
     i = 0
     while true
@@ -34,7 +36,7 @@ function depth(tree::CSGNode)
         end
         i += 1
 
-        newchilds = Array{CSGNode,1}(undef,0)
+        newchilds = Array{typeof(tree),1}(undef,0)
         for a in childs
             append!(newchilds, children(a))
         end
@@ -43,7 +45,7 @@ function depth(tree::CSGNode)
 end
 
 
-function treesize(tree::CSGNode)
+function treesize(tree::AbstractCSGNode)
     s = 0
     for _ in PreOrderDFS(tree)
         s+=1
