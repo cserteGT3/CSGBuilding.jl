@@ -69,14 +69,20 @@ function buildcache(surfaces, points)
     return (nodes, cached_values, cached_normals)
 end
 
-function cached2tree(cachedtree, surfaces)
-    treemap((x,y,z)->mapcache(x,y,z,surfaces), PostOrderDFS(cachedtree))
+function cached2normaltree(tree::CachedCSGNode, surfaces)
+    return mapcache(tree, surfaces)
 end
 
-function mapcache(i, n, children, suf)
-    if n.data isa Function
-        return CSGNode(n.data, children)
+function mapcache(tree, surf)
+    if isempty(tree.children)
+        return CSGNode(surf[tree.data.index], [])
     else
-        return CSGNode(suf[n.data.index], children)
+        op = tree.data
+        if op == complement
+            return CSGNode(op, [mapcache(tree.children[1], surf)])
+        else
+            cs = tree.children
+            return CSGNode(op, [mapcache(cs[1], surf), mapcache(cs[2], surf)])
+        end
     end
 end

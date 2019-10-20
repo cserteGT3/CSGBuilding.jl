@@ -27,7 +27,8 @@ export  CachedCSGNode,
         CachedSurface,
         CachedResult,
         randomcachedtree,
-        buildcache
+        buildcache,
+        cached2normaltree
 
 export  writeparaviewformat
 
