@@ -216,12 +216,16 @@ end
 function geneticbuildtree(surfaces, points, normals, params)
     @unpack itermax, maxdepth, populationsize = params
     @unpack keepbestn = params
+    notifit = itermax > 10 ? div(itermax,10) : 1
     population = [randomtree(surfaces, maxdepth) for _ in 1:populationsize]
     npopulation = similar(population)
+    start_time = time_ns()
     for i in 1:itermax
-        @info "$i-th iteration"
+        if i%notifit == 0
+            @info "$i-th iteration"
+        end
         population, _ = rankpopulation(population, points, normals, params)
-        @info "ranked population"
+        @debug "ranked population"
         # save the best
         npopulation[1:keepbestn] = population[1:keepbestn]
         n = keepbestn+1
@@ -246,16 +250,20 @@ function geneticbuildtree(surfaces, points, normals, params)
         # npopulation is populated with a new set of creature
         population = npopulation
     end
+    fint = trunc((time_ns() - start_time)/1_000_000_000, digits=2)
+    @info "Finished: $itermax iteration in $fint seconds."
     return population
 end
 
-function cachedgeneticbuildtree(nodes, points, normals, params)
+function cachedgeneticbuildtree(surfaces, points, normals, params)
     @unpack itermax, maxdepth, populationsize = params
     @unpack keepbestn = params
-    notifit = div(itermax,10)
-    cnodes, cvalues, cnormals = cachenodes(nodes, points)
+    notifit = itermax > 10 ? div(itermax,10) : 1
+    cnodes, cvalues, cnormals = cachenodes(surfaces, points)
     population = [randomcachedtree(cnodes, maxdepth) for _ in 1:populationsize]
     npopulation = similar(population)
+    start_time = time_ns()
+    @info "Iteration in progress..."
     for i in 1:itermax
         if i%notifit == 0
             @info "$i-th iteration"
@@ -286,5 +294,7 @@ function cachedgeneticbuildtree(nodes, points, normals, params)
         # npopulation is populated with a new set of creature
         population = npopulation
     end
-    return population
+    fint = trunc((time_ns() - start_time)/1_000_000_000, digits=2)
+    @info "Finished: $itermax iteration in $fint seconds."
+    return population, cached2normaltree(population[1], surfaces)
 end
