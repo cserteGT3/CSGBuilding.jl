@@ -8,6 +8,8 @@ using Parameters
 using Logging
 #import Base.Threads.@spawn
 using Base.Threads
+using GeometryTypes: normals, vertices
+using FileIO: load
 
 export  ImplicitResult,
         value,
@@ -31,7 +33,8 @@ export  CachedCSGNode,
         cached2normaltree,
         cachedgeneticbuildtree
 
-export  writeparaviewformat
+export  writeparaviewformat,
+        readobj
 
 export  CSGGeneticBuildParameters,
         rankpopulation,

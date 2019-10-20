@@ -23,15 +23,23 @@ function write_volume(voxels, filename)
     end
 end
 
-function writeparaviewformat(surface, fname, ranget)
-    f = ranget[1]
-    t = ranget[2]
-    res = ranget[3]
-
-    voxels = Array{Float64}(undef, res, res, res)
-    r = range(f, stop=t, length=res)
-    for i in 1:res, j in 1:res, k in 1:res
+function writeparaviewformat(surface, fname, scaletuple)
+    @unpack mincorner, maxcorner, edgelength = scaletuple
+    voxels = Array{Float64}(undef, edgelength, edgelength, edgelength)
+    r = range(mincorner, stop=maxcorner, length=edgelength)
+    for i in 1:edgelength, j in 1:edgelength, k in 1:edgelength
         voxels[i,j,k] = value(evaluate(surface, SVector{3}([r[i], r[j], r[k]])))
     end
     write_volume(voxels, fname)
+end
+
+function readobj(fname, scaletuple)
+    @unpack mincorner, maxcorner, edgelength = scaletuple
+    m = load(fname)
+    vs = vertices(m)./(edgelength-1)
+    vs = vs.*abs(mincorner*maxcorner)
+    diffv = fill(mincorner, 3)
+    vs = [v+diffv for v in vs]
+    ns = normalize.(normals(m))
+    return vs, ns
 end
