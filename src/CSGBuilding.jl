@@ -7,7 +7,7 @@ using Random
 using Parameters
 using Logging
 #import Base.Threads.@spawn
-#using Base.Threads
+using Base.Threads
 
 export  ImplicitResult,
         value,

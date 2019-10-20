@@ -46,13 +46,35 @@ function rawscore(tree, cpoints, cnormals, normals, params)
     return score - λ*treesize(tree)
 end
 
-function rankpopulation(population, cpoints, cnormals, normals, params)
+function rankpopulation(population, points, normals, params)
     sum = 0.
     score = Array{Float64,1}(undef, size(population))
     normed = similar(score)
 
-    #@threads for i in eachindex(population)
-    for i in eachindex(population)
+    @threads for i in eachindex(population)
+    #for i in eachindex(population)
+        score[i] = rawscore(population[i], points, normals, params)
+    end
+    for i in eachindex(score)
+        normed[i] = 1/(1+score[i])
+        sum += normed[i]
+    end
+    for i in eachindex(score)
+        score[i] = normed[i]/sum
+    end
+    # this is the rescaled score
+
+    p = sortperm(score)
+    return population[p], score[p]
+end
+
+function rankcachedpopulation(population, cpoints, cnormals, normals, params)
+    sum = 0.
+    score = Array{Float64,1}(undef, size(population))
+    normed = similar(score)
+
+    @threads for i in eachindex(population)
+    #for i in eachindex(population)
         score[i] = rawscore(population[i], cpoints, cnormals, normals, params)
     end
     for i in eachindex(score)
@@ -235,7 +257,7 @@ function cachedgeneticbuildtree(nodes, points, normals, params)
     npopulation = similar(population)
     for i in 1:itermax
         @info "$i-th iteration"
-        population, _ = rankpopulation(population, cvalues, cnormals, normals, params)
+        population, _ = rankcachedpopulation(population, cvalues, cnormals, normals, params)
         @info "ranked population"
         # save the best
         npopulation[1:keepbestn] = population[1:keepbestn]
