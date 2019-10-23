@@ -35,7 +35,8 @@ export  CachedCSGNode,
         leaf2code,
         node2code,
         tree2code,
-        code2func
+        code2func,
+        tree2func
 
 export  writeparaviewformat,
         readobj

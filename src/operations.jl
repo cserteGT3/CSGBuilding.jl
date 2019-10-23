@@ -25,10 +25,7 @@ const opDict = Dict(:complement=>complement,
                 :union=>union)
 
 function complement(f::CachedCSGNode, coords, ind)
-    ev = evaluate(f, coords, ind)
-    ev.signint = -1*ev.signint
-    ev.value = -1*ev.value
-    return ev
+    return flipsign(evaluate(f, coords, ind))
 end
 
 function intersection(f::CachedCSGNode, g::CachedCSGNode, coords, ind)

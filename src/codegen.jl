@@ -1,8 +1,6 @@
 # complement = -1*
 function cmpl(x::CachedResult)
-    x.value = -1*x.value
-    x.signint = -1*x.signint
-    return x
+    return CachedResult(-1*x.value, -1*x.signint, x.index)
 end
 
 # union = min
@@ -21,13 +19,13 @@ const opDictCode = Dict(:complement=>cmpl,
                 :subtraction=>subtr,
                 :union=>uni)
 
-function valuef(surface::CachedSurface, cachedvalues, ind)
+function evalf(surface::CachedSurface, cachedvalues, ind)
     val = cachedvalues[ind][surface.index]
     return CachedResult(val, 1, surface.index)
 end
 
 function leaf2code(l::CachedCSGNode, _cvals, _ind)
-    ex = Expr(Symbol("="), l.sym, Expr(:call, valuef, l.data, _cvals, _ind))
+    ex = Expr(Symbol("="), l.sym, Expr(:call, evalf, l.data, _cvals, _ind))
     return ex
 end
 
@@ -71,3 +69,5 @@ function code2func(cwrap)
         Expr(:block,cwrap.Core...))
     return eval(expr)
 end
+
+tree2func(tree::CachedCSGNode) = code2func(tree2code(tree))

@@ -5,13 +5,15 @@ end
 
 Base.show(io::IO, surface::CachedSurface) = print(io, surface.name)
 
-mutable struct CachedResult
+struct CachedResult
     value::Float64
     signint::Int
     index::Int
 end
 
 value(result::CachedResult) = result.value
+
+flipsign(x::CachedResult) = CachedResult(-1*x.value, -1*x.signint, x.index)
 
 function normal(result::CachedResult, cachednormals, ind)
     return result.signint*cachednormals[ind][result.index]
@@ -27,11 +29,7 @@ function normal(surface::CachedSurface, cachednormals, ind)
 end
 
 # complement = -1*
-function complement(x::CachedResult)
-    x.value = -1*x.value
-    x.signint = -1*x.signint
-    return x
-end
+complement(x::CachedResult) = flipsign(x)
 
 # union = min
 Base.min(x::CachedResult, y::CachedResult) = ifelse(isless(x.value, y.value), x, y)
@@ -51,7 +49,8 @@ struct CachedCSGNode <: AbstractCSGNode
 end
 
 AbstractTrees.children(tree::CachedCSGNode) = tree.children
-AbstractTrees.printnode(io::IO, tree::CachedCSGNode) = print(io, tree.data," ", tree.sym)
+#AbstractTrees.printnode(io::IO, tree::CachedCSGNode) = print(io, tree.data," ", tree.sym)
+AbstractTrees.printnode(io::IO, tree::CachedCSGNode) = print(io, tree.data)
 
 function cachenodes(surfaces, points)
     cached_values = [[value(evaluate(f, p)) for f in surfaces] for p in points]
