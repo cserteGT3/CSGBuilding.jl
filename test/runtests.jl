@@ -17,6 +17,9 @@ const CSGB = CSGBuilding
     @testset "Set operations" begin
         include("operations.jl")
     end
+	@testset "tree evaluations" begin
+		include("tree_evaluations.jl")
+	end
 	@testset "genetic algorithm" begin
 		include("genetic.jl")
 	end

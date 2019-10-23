@@ -25,18 +25,14 @@ export  CSGNode,
         treesize,
         randomtree
 
-export  CachedCSGNode,
-        CachedSurface,
+export  CachedSurface,
         CachedResult,
-        randomcachedtree,
+        CachedCSGNode,
         cachenodes,
-        cached2normaltree,
-        cachedgeneticbuildtree,
-        leaf2code,
-        node2code,
-        tree2code,
-        code2func,
-        tree2func
+        randomcachedtree,
+        cached2normaltree
+
+export  tree2func
 
 export  writeparaviewformat,
         readobj
@@ -45,7 +41,8 @@ export  CSGGeneticBuildParameters,
         rankpopulation,
         crossover,
         mutate,
-        geneticbuildtree
+        geneticbuildtree,
+        cachedgeneticbuildtree
 
 include("implicitsurfaces.jl")
 include("csgtrees.jl")

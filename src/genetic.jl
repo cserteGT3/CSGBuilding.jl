@@ -36,9 +36,11 @@ function rawscore(tree, cpoints, cnormals, normals, params)
     # λ should be unpacked?
     λ = log(size(cpoints, 1))
     score = 0.
-
-    for i in eachindex(normals)
-        v, n = valueandnormal(tree, cpoints, cnormals, i)
+    f = tree2func(tree)
+    for i in eachindex(cpoints)
+        res = Base.invokelatest(f, cpoints, i)::CachedResult
+        v = value(res)
+        n = normal(res, cnormals, i)
         d_i = v/ϵ_d
         θ_i = acos(dot(n, normals[i]))/α
         score += exp(-d_i^2) + exp(-θ_i^2)

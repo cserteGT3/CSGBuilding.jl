@@ -62,7 +62,7 @@ struct CodeWrap
 end
 
 function code2func(cwrap)
-    expr = Expr(:->,
+    expr = Expr(:function,
         Expr(:tuple,
         cwrap.Params[1],
         cwrap.Params[2]),
