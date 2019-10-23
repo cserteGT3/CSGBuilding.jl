@@ -31,7 +31,11 @@ export  CachedCSGNode,
         randomcachedtree,
         cachenodes,
         cached2normaltree,
-        cachedgeneticbuildtree
+        cachedgeneticbuildtree,
+        leaf2code,
+        node2code,
+        tree2code,
+        code2func
 
 export  writeparaviewformat,
         readobj
@@ -46,6 +50,7 @@ include("implicitsurfaces.jl")
 include("csgtrees.jl")
 include("cachedtrees.jl")
 include("operations.jl")
+include("codegen.jl")
 include("visualize.jl")
 include("genetic.jl")
 

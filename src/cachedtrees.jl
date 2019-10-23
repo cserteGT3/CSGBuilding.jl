@@ -5,13 +5,17 @@ end
 
 Base.show(io::IO, surface::CachedSurface) = print(io, surface.name)
 
-mutable struct CachedResult{F<:Real}
-    value::F
+mutable struct CachedResult
+    value::Float64
     signint::Int
     index::Int
 end
 
 value(result::CachedResult) = result.value
+
+function normal(result::CachedResult, cachednormals, ind)
+    return result.signint*cachednormals[ind][result.index]
+end
 
 function evaluate(surface::CachedSurface, cachedvalues, ind)
     val = cachedvalues[ind][surface.index]
@@ -30,11 +34,11 @@ function complement(x::CachedResult)
 end
 
 # union = min
-# Base.min(x::CachedResult, y::CachedResult) = ifelse(isless(x.value, y.value), x, y)
+Base.min(x::CachedResult, y::CachedResult) = ifelse(isless(x.value, y.value), x, y)
 union(x::CachedResult, y::CachedResult) = ifelse(isless(x.value, y.value), x, y)
 
 # intersection = max
-# Base.max(x::CachedResult, y::CachedResult) = ifelse(isless(y.value, x.value), x, y)
+Base.max(x::CachedResult, y::CachedResult) = ifelse(isless(y.value, x.value), x, y)
 intersection(x::CachedResult, y::CachedResult) = ifelse(isless(y.value, x.value), x, y)
 
 # subtraction f,g = f union complement(g)
@@ -77,10 +81,6 @@ function randomcachedtree(nodes, maxdepth::Int)
     return makecached(nodes, maxdepth)
 end
 
-function cached2normaltree(tree::CachedCSGNode, surfaces)
-    return mapcache(tree, surfaces)
-end
-
 function mapcache(tree, surf)
     if isempty(tree.children)
         return CSGNode(surf[tree.data.index], [])
@@ -95,20 +95,21 @@ function mapcache(tree, surf)
     end
 end
 
-#=
+function cached2normaltree(tree::CachedCSGNode, surfaces)
+    return mapcache(tree, surfaces)
+end
+
 function evaluate(tree::CachedCSGNode, cachedcoords, pointind)
     # tree node doesn't have children
     isempty(tree.children) && return evaluate(tree.data, cachedcoords, pointind)
 
     # node.data isa Function -> it has children
-    setop = tree.data::Function
+    setop = opDict[tree.data]::Function
     return setop(tree.children..., cachedcoords, pointind)
 end
-
 
 function valueandnormal(tree::CachedCSGNode, ccoords, cnormals, ind)
     val = evaluate(tree, ccoords, ind)
     n = cnormals[ind][val.index]
     return (value(val), n*val.signint)
 end
-=#
