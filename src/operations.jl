@@ -18,7 +18,12 @@ function union(f::CSGNode, g::CSGNode, coords)
 end
 
 const CSGOperations = [complement, intersection, subtraction, union]
-
+const CSGopsyms = [:complement, :intersection, :subtraction, :union]
+const opDict = Dict(:complement=>complement,
+                :intersection=>intersection,
+                :subtraction=>subtraction,
+                :union=>union)
+#=
 function complement(f::CachedCSGNode, coords, ind)
     ev = evaluate(f, coords, ind)
     ev.signint = -1*ev.signint
@@ -37,3 +42,4 @@ end
 function union(f::CachedCSGNode, g::CachedCSGNode, coords, ind)
     return min(evaluate(f, coords, ind), evaluate(g, coords, ind))
 end
+=#

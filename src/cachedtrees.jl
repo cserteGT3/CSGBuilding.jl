@@ -13,9 +13,6 @@ end
 
 value(result::CachedResult) = result.value
 
-Base.min(x::CachedResult, y::CachedResult) = ifelse(isless(x.value, y.value), x, y)
-Base.max(x::CachedResult, y::CachedResult) = ifelse(isless(y.value, x.value), x, y)
-
 function evaluate(surface::CachedSurface, cachedvalues, ind)
     val = cachedvalues[ind][surface.index]
     return CachedResult(val, 1, surface.index)
@@ -25,27 +22,39 @@ function normal(surface::CachedSurface, cachednormals, ind)
     return cachednormals[ind][surface.index]
 end
 
-struct CachedCSGNode <: AbstractCSGNode
-    data::Union{CachedSurface,Function}
-    children::Array{CachedCSGNode,1}
+# complement = -1*
+function complement(x::CachedResult)
+    x.value = -1*x.value
+    x.signint = -1*x.signint
+    return x
 end
 
-function evaluate(tree::CachedCSGNode, cachedcoords, pointind)
-    # tree node doesn't have children
-    isempty(tree.children) && return evaluate(tree.data, cachedcoords, pointind)
+# union = min
+# Base.min(x::CachedResult, y::CachedResult) = ifelse(isless(x.value, y.value), x, y)
+union(x::CachedResult, y::CachedResult) = ifelse(isless(x.value, y.value), x, y)
 
-    # node.data isa Function -> it has children
-    setop = tree.data::Function
-    return setop(tree.children..., cachedcoords, pointind)
+# intersection = max
+# Base.max(x::CachedResult, y::CachedResult) = ifelse(isless(y.value, x.value), x, y)
+intersection(x::CachedResult, y::CachedResult) = ifelse(isless(y.value, x.value), x, y)
+
+# subtraction f,g = f union complement(g)
+subtraction(x::CachedResult, y::CachedResult) = intersection(x, complement(y))
+
+struct CachedCSGNode <: AbstractCSGNode
+    data::Union{CachedSurface,Symbol}
+    children::Array{CachedCSGNode,1}
+    sym::Symbol
 end
 
 AbstractTrees.children(tree::CachedCSGNode) = tree.children
-AbstractTrees.printnode(io::IO, tree::CachedCSGNode) = print(io, tree.data)
+AbstractTrees.printnode(io::IO, tree::CachedCSGNode) = print(io, tree.data," ", tree.sym)
 
-function valueandnormal(tree::CachedCSGNode, ccoords, cnormals, ind)
-    val = evaluate(tree, ccoords, ind)
-    n = cnormals[ind][val.index]
-    return (value(val), n*val.signint)
+function cachenodes(surfaces, points)
+    cached_values = [[value(evaluate(f, p)) for f in surfaces] for p in points]
+    cachedsurf = [CachedSurface(_name(surfaces[i])*"$i", i) for i in eachindex(surfaces)]
+    nodes = [CachedCSGNode(s, [], gensym()) for s in cachedsurf]
+    cached_normals = [[normal(f, p) for f in surfaces] for p in points]
+    return (nodes, cached_values, cached_normals)
 end
 
 function makecached(surf, n)
@@ -53,11 +62,12 @@ function makecached(surf, n)
         return rand(surf)
     else
         # more recursive calls
-        op = rand(CSGOperations)
-        if op == complement
-            return CachedCSGNode(op, [makecached(surf, n-1)])
+        op = rand(CSGopsyms)
+        s = gensym()
+        if op === :complement
+            return CachedCSGNode(op, [makecached(surf, n-1)], s)
         else
-            return CachedCSGNode(op, [makecached(surf, n-1), makecached(surf, n-1)])
+            return CachedCSGNode(op, [makecached(surf, n-1), makecached(surf, n-1)], s)
         end
     end
 end
@@ -65,14 +75,6 @@ end
 function randomcachedtree(nodes, maxdepth::Int)
     @assert maxdepth > 0 "Maximum depth should be at least 1!"
     return makecached(nodes, maxdepth)
-end
-
-function cachenodes(surfaces, points)
-    cached_values = [[value(evaluate(f, p)) for f in surfaces] for p in points]
-    cachedsurf = [CachedSurface(_name(surfaces[i])*"$i", i) for i in eachindex(surfaces)]
-    nodes = [CachedCSGNode(s, []) for s in cachedsurf]
-    cached_normals = [[normal(f, p) for f in surfaces] for p in points]
-    return (nodes, cached_values, cached_normals)
 end
 
 function cached2normaltree(tree::CachedCSGNode, surfaces)
@@ -84,11 +86,29 @@ function mapcache(tree, surf)
         return CSGNode(surf[tree.data.index], [])
     else
         op = tree.data
-        if op == complement
-            return CSGNode(op, [mapcache(tree.children[1], surf)])
+        cs = tree.children
+        if op === :complement
+            return CSGNode(complement, [mapcache(cs[1], surf)])
         else
-            cs = tree.children
-            return CSGNode(op, [mapcache(cs[1], surf), mapcache(cs[2], surf)])
+            return CSGNode(opDict[op], [mapcache(cs[1], surf), mapcache(cs[2], surf)])
         end
     end
 end
+
+#=
+function evaluate(tree::CachedCSGNode, cachedcoords, pointind)
+    # tree node doesn't have children
+    isempty(tree.children) && return evaluate(tree.data, cachedcoords, pointind)
+
+    # node.data isa Function -> it has children
+    setop = tree.data::Function
+    return setop(tree.children..., cachedcoords, pointind)
+end
+
+
+function valueandnormal(tree::CachedCSGNode, ccoords, cnormals, ind)
+    val = evaluate(tree, ccoords, ind)
+    n = cnormals[ind][val.index]
+    return (value(val), n*val.signint)
+end
+=#
