@@ -90,12 +90,14 @@ function rankcachedpopulation(population, cpoints, cnormals, normals, params)
 end
 
 
-function rawscorefunc(tree, cpoints, cnormals, normals, params)
+function rawscorefunc(tree, cpoints, cnormals, normals, params, sem)
     @unpack ϵ_d, α = params
     # λ should be unpacked?
     λ = log(size(cpoints, 1))
     score = 0.
+    acquire(sem)
     f = tree2func(tree)
+    release(sem)
     for i in eachindex(cpoints)
         res = Base.invokelatest(f, cpoints, i)::CachedResult
         v = value(res)
@@ -112,9 +114,10 @@ function rankcachedpopulationfunc(population, cpoints, cnormals, normals, params
     score = Array{Float64,1}(undef, size(population))
     normed = similar(score)
 
-    #@threads for i in eachindex(population)
-    for i in eachindex(population)
-        score[i] = rawscorefunc(population[i], cpoints, cnormals, normals, params)
+    smphr = Semaphore(1)
+    @threads for i in eachindex(population)
+    #for i in eachindex(population)
+        score[i] = rawscorefunc(population[i], cpoints, cnormals, normals, params, smphr)
     end
     for i in eachindex(score)
         normed[i] = 1/(1+score[i])
@@ -308,7 +311,6 @@ function cachedfuncgeneticbuildtree(surfaces, points, normals, params)
         if i%notifit == 0
             @info "$i-th iteration"
         end
-        @show i
         population, _ = rankcachedpopulationfunc(population, cvalues, cnormals, normals, params)
         @debug "ranked population"
         # save the best

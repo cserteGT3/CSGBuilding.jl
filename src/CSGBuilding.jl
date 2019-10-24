@@ -10,6 +10,7 @@ using Logging
 using Base.Threads
 using GeometryTypes: normals, vertices
 using FileIO: load
+using Base: Semaphore, acquire, release
 
 export  ImplicitResult,
         value,
