@@ -42,7 +42,8 @@ export  CSGGeneticBuildParameters,
         crossover,
         mutate,
         geneticbuildtree,
-        cachedgeneticbuildtree
+        cachedgeneticbuildtree,
+        cachedfuncgeneticbuildtree
 
 include("implicitsurfaces.jl")
 include("csgtrees.jl")
