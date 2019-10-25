@@ -23,4 +23,7 @@ const CSGB = CSGBuilding
 	@testset "genetic algorithm" begin
 		include("genetic.jl")
 	end
+	@testset "oriented bounding box" begin
+		include("orientedbox.jl")
+	end
 end

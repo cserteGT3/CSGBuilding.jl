@@ -48,6 +48,8 @@ export  tree2func
 export  writeparaviewformat,
         readobj
 
+export  centroid
+
 export  CSGGeneticBuildParameters,
         rankpopulation,
         crossover,
@@ -65,6 +67,7 @@ include("cachedtrees.jl")
 include("operations.jl")
 include("codegen.jl")
 include("visualize.jl")
+include("orientedbox.jl")
 include("genetic.jl")
 include("deprecated.jl")
 include("ransaccompat.jl")
