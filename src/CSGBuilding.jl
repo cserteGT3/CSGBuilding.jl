@@ -53,5 +53,6 @@ include("operations.jl")
 include("codegen.jl")
 include("visualize.jl")
 include("genetic.jl")
+include("deprecated.jl")
 
 end # module
