@@ -143,8 +143,8 @@ function rankcachedpopulationfunc(population, cpoints, cnormals, normals, params
     normed = similar(score)
 
     smphr = Semaphore(1)
-    #@threads for i in eachindex(population)
-    for i in eachindex(population)
+    @threads for i in eachindex(population)
+    #for i in eachindex(population)
         score[i] = rawscorefunc(population[i], cpoints, cnormals, normals, params, smphr)
     end
     #=
