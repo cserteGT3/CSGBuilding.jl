@@ -129,6 +129,7 @@ function rankcachedpopulationfunc(population, cpoints, cnormals, normals, params
     for i in eachindex(population)
         score[i] = rawscorefunc(population[i], cpoints, cnormals, normals, params, smphr)
     end
+    #=
     for i in eachindex(score)
         normed[i] = 1/(1+score[i])
         sum += normed[i]
@@ -137,8 +138,8 @@ function rankcachedpopulationfunc(population, cpoints, cnormals, normals, params
         score[i] = normed[i]/sum
     end
     # this is the rescaled score
-
-    p = sortperm(score)
+    =#
+    p = sortperm(score, rev=true)
     return population[p], score[p]
 end
 
@@ -155,8 +156,9 @@ function cachedfuncgeneticbuildtree(surfaces, points, normals, params)
         if i%notifit == 0
             @info "$i-th iteration"
         end
-        population, _ = rankcachedpopulationfunc(population, cvalues, cnormals, normals, params)
-        @debug "ranked population: $i. iteration"
+        population, nsc = rankcachedpopulationfunc(population, cvalues, cnormals, normals, params)
+        #@debug "ranked population: $i. iteration"
+        @debug "$i it - best score: $(nsc[1]), max raw: $(maximum(nsc))"
         # save the best
         npopulation[1:keepbestn] = population[1:keepbestn]
         n = keepbestn+1
