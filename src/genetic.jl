@@ -105,9 +105,9 @@ function rawscorefunc(tree, cpoints, cnormals, normals, params, sem)
     # λ should be unpacked?
     λ = log(size(cpoints, 1))
     score = 0.
-    #acquire(sem)
+    acquire(sem)
     f = tree2func(tree)
-    #release(sem)
+    release(sem)
     for i in eachindex(cpoints)
         res = Base.invokelatest(f, cpoints, i)::CachedResult
         v = value(res)
