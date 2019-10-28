@@ -9,6 +9,7 @@ using Logging
 #import Base.Threads.@spawn
 using Base.Threads
 using GeometryTypes: normals, vertices
+using MeshIO
 using FileIO: load
 using Base: Semaphore, acquire, release
 
