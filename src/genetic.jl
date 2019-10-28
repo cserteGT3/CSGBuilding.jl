@@ -113,7 +113,9 @@ function rawscorefunc(tree, cpoints, cnormals, normals, params, sem)
         v = value(res)
         n = normal(res, cnormals, i)
         d_i = v/ϵ_d
-        θ_i = acos(dot(n, normals[i]))/α
+        ddot = dot(n, normals[i])
+        dddot = ddot > 1 ? one(ddot) : ddot
+        θ_i = acos(dddot)/α
         score += exp(-d_i^2) + exp(-θ_i^2)
     end
     return score - λ*treesize(tree)
@@ -140,7 +142,8 @@ function rankcachedpopulationfunc(population, cpoints, cnormals, normals, params
     # this is the rescaled score
     =#
     p = sortperm(score, rev=true)
-    return population[p], score[p]
+    bestscore = score[p][1]
+    return population[p], bestscore
 end
 
 function cachedfuncgeneticbuildtree(surfaces, points, normals, params)
@@ -158,7 +161,7 @@ function cachedfuncgeneticbuildtree(surfaces, points, normals, params)
         end
         population, nsc = rankcachedpopulationfunc(population, cvalues, cnormals, normals, params)
         #@debug "ranked population: $i. iteration"
-        @debug "$i it - best score: $(nsc[1]), max raw: $(maximum(nsc))"
+        @debug "$i it - best score: $nsc"
         # save the best
         npopulation[1:keepbestn] = population[1:keepbestn]
         n = keepbestn+1
