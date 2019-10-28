@@ -40,6 +40,6 @@ function readobj(fname, scaletuple)
     vs = vs.*abs(mincorner*maxcorner)
     diffv = fill(mincorner, 3)
     vs = [v+diffv for v in vs]
-    ns = normalize.(normals(m))
+    ns = -1 .* normalize.(normals(m))
     return vs, ns
 end
