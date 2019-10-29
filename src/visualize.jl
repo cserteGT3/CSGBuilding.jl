@@ -37,7 +37,7 @@ function readobj(fname, scaletuple)
     @unpack mincorner, maxcorner, edgelength = scaletuple
     m = load(fname)
     vs = vertices(m)./(edgelength-1)
-    vs = vs.*abs(mincorner*maxcorner)
+    vs = vs.*(abs(mincorner)+abs(maxcorner))
     diffv = fill(mincorner, 3)
     vs = [v+diffv for v in vs]
     ns = -1 .* normalize.(normals(m))
