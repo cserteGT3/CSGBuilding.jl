@@ -100,14 +100,12 @@ function tournament(params)
     return tourn[1]
 end
 
-function rawscorefunc(tree, cpoints, cnormals, normals, params, sem)
+function rawscorefunc(tree, cpoints, cnormals, normals, params)
     @unpack ϵ_d, α = params
     # λ should be unpacked?
     λ = log(size(cpoints, 1))
     score = 0.
-    acquire(sem)
     f = tree2func(tree)
-    release(sem)
     for i in eachindex(cpoints)
         res = Base.invokelatest(f, cpoints, i)::CachedResult
         v = value(res)
@@ -142,10 +140,10 @@ function rankcachedpopulationfunc(population, cpoints, cnormals, normals, params
     score = Array{Float64,1}(undef, size(population))
     normed = similar(score)
 
-    smphr = Semaphore(1)
-    @threads for i in eachindex(population)
-    #for i in eachindex(population)
-        score[i] = rawscorefunc(population[i], cpoints, cnormals, normals, params, smphr)
+    #smphr = Semaphore(1)
+    #@threads for i in eachindex(population)
+    for i in eachindex(population)
+        score[i] = rawscorefunc(population[i], cpoints, cnormals, normals, params)
     end
     #=
     for i in eachindex(score)
