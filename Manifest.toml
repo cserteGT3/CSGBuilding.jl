@@ -109,7 +109,7 @@ uuid = "de0858da-6303-5e67-8744-51eddeeeb8d7"
 
 [[RANSAC]]
 deps = ["LinearAlgebra", "Logging", "NearestNeighbors", "Parameters", "Random", "RegionTrees", "StaticArrays", "UnionFind"]
-git-tree-sha1 = "76f25236a6332a3a952f55a7945f899477d4d87a"
+git-tree-sha1 = "be48af70f363491addd48acc7abd0f3fe17ea8b4"
 repo-rev = "master"
 repo-url = "https://github.com/cserteGT3/RANSAC.jl"
 uuid = "d6bc97e0-a563-11e9-1861-c573f65f3bc3"

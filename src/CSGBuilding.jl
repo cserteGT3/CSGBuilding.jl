@@ -12,7 +12,13 @@ using GeometryTypes: normals, vertices
 using MeshIO
 using FileIO: load
 using Base: Semaphore, acquire, release
+# cone
 using RANSAC: project2cone
+# translational
+using RANSAC: project2sketchplane, impldistance2segment, outwardsnormal
+# conversion
+using RANSAC: FittedPlane, FittedSphere, FittedCylinder, FittedCone, ExtractedTranslational
+using RANSAC: PointCloud, ScoredShape, ShapeCandidate
 
 export  ImplicitResult,
         value,
@@ -21,6 +27,7 @@ export  ImplicitResult,
         ImplicitPlane,
         ImplicitCylinder,
         ImplicitCone,
+        ImplicitTranslational,
         evaluate
 
 export  CSGNode,
@@ -49,6 +56,9 @@ export  CSGGeneticBuildParameters,
         cachedgeneticbuildtree,
         cachedfuncgeneticbuildtree
 
+export  toimplicit,
+        scored2implicit
+
 include("implicitsurfaces.jl")
 include("csgtrees.jl")
 include("cachedtrees.jl")
@@ -57,5 +67,6 @@ include("codegen.jl")
 include("visualize.jl")
 include("genetic.jl")
 include("deprecated.jl")
+include("ransaccompat.jl")
 
 end # module

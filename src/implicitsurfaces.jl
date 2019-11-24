@@ -135,12 +135,12 @@ function ImplicitCone(apex::AbstractArray, axis::AbstractArray, opang)
 end
 
 function evaluate(surface::ImplicitCone, coords)
-    d, _ = project2cone(surface)
+    d, _ = project2cone(surface, coords)
     return ImplicitResult(surface, d, 1)
 end
 
 function normal(surface::ImplicitCone, coords)
-    _, n = project2cone(surface)
+    _, n = project2cone(surface, coords)
     return n
 end
 
@@ -148,3 +148,39 @@ function Base.show(io::IO, surface::ImplicitCone)
     return print(io, "ImplCone: op:$(rad2deg(surface.opang)°)")
 end
 _name(surface::ImplicitCone) = "Cone"
+
+## translational
+
+struct ImplicitTranslational <: AbstractImplicitSurface
+    coordframe
+    contour
+    # center of gravity
+    center
+    # normal of the contour is parallel to the direction
+    # towards the center of the contour?
+    # == should flip the computed normals to direct outwards?
+    # this is used in e.g. CSGBuilding
+    # true means, that the computed normals must be turned to direct outside
+    outwards::Int
+    # should the computed normal be flipped to match the measured points
+    # this is used in this package to ensure that in/outwards is correct
+    # true means that computed normals must be turned to match the measured points
+    flipnormal::Int
+end
+
+function evaluate(surface::ImplicitTranslational, coords)
+    proj = project2sketchplane(coords, surface.coordframe)
+    d, i = impldistance2segment(proj, surface)
+    return ImplicitResult(surface, d, 1)
+end
+
+function normal(surface::ImplicitTranslational, coords)
+    proj = project2sketchplane(coords, surface.coordframe)
+    _, i = impldistance2segment(proj, surface)
+    return outwardsnormal(surface, i)
+end
+
+function Base.show(io::IO, surface::ImplicitTranslational)
+    return print(io, "ImplTransl")
+end
+_name(surface::ImplicitTranslational) = "Transl"
