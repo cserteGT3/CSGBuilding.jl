@@ -3,17 +3,29 @@ function centroid(points)
     return com/size(points, 1)
 end
 
-"""
-    normedcovmat(points)
-
-Compute the normed covariance matrix of the points.
-"""
-function normedcovmat(points)
+function covmat(points, com)
     @assert size(points,1) > 1
-    com = centroid(points)
-    vdiff = [p-com for p in points]
-    m = sum(vdiff*vdiff')
-    return m/(size(points,1)-1)
+    covmat = zeros(3,3)
+    for i in eachindex(points)
+        pt = points[i]-com
+
+        covmat[2,2] += pt[2]*pt[2]
+        covmat[2,3] += pt[2]*pt[3]
+        covmat[3,3] += pt[3]*pt[3]
+
+        covmat[1,1] += pt[1]*pt[1]
+        covmat[1,2] += pt[1]*pt[2]
+        covmat[1,3] += pt[1]*pt[3]
+    end
+    covmat[2,1] = covmat[1,2]
+    covmat[3,1] = covmat[1,3]
+    covmat[3,2] = covmat[2,3]
+    return covmat
+end
+
+function covmat(points)
+    c = centroid(points)
+    return covmat(points, c)
 end
 
 """
@@ -21,24 +33,43 @@ end
 
 Compute the normed covariance matrix with the given centroid.
 """
-function normedcovmat(points, centr)
-    @assert size(points,1) > 1
-    vdiff = [p-centr for p in points]
-    m = sum(vdiff*vdiff')
-    return m/(size(points,1)-1)
+function normedcovmat(points, c)
+    m = covmat(points, c)
+    return m/size(points,1)
 end
 
 """
-    vec2homvec(ps::AbstractArray)
+    normedcovmat(points)
+
+Compute the normed covariance matrix of the points.
+"""
+function normedcovmat(points)
+    c = centroid(points)
+    m = covmat(points, c)
+    return m/size(points,1)
+end
+
+"""
+    vec2homvec(ps)
 
 Convert 3D vectors to homogeneous vectors: append 1 to each vector.
 Return a vector of SVectors.
 """
-function vec2homvec(ps::AbstractArray)
-    return [SVector{4,Float64}(p[i]..., 1) for i in eachindex(ps)]
+function vec2homvec(ps)
+    return [SVector{4,Float64}(p..., 1) for p in ps]
 end
 
-function findOOBB(points)
+"""
+    homvec2vec(ps)
+
+Convert 3D homogeneous vectors to "normal" vectors: drop the 1 from the end.
+Return a vector of SVectors.
+"""
+function homvec2vec(ps)
+    return [SVector{3,Float64}(p[1:3]) for p in ps]
+end
+
+function findOBB(points)
     c = centroid(points)
     m = normedcovmat(points, c)
     evs = eigvecs(m)
@@ -51,6 +82,28 @@ function findOOBB(points)
     rmat = zeros(4,4)
     rmat[4,4] = 1
     rmat[1:3,1:3] = evs'
-    rmat[1:3,4] = -1 .* c
-    rm = SMatrix{4,4,Float64}(rmat)
+    rmat[1:3,4] = -1 .* evs' * c
+    trm = SMatrix{4,4,Float64}(rmat)
+
+    p_transformed = [trm*p for p in vec2homvec(points)]
+    aabb_tr = homvec2vec(findAABB(p_transformed))
+    meanDiagonal = sum(aabb_tr)/2
+
+    # size of oriented bounding box
+    bbs = aabb_tr[2]-aabb_tr[1]
+    nv = -bbs/2
+    # box around origo
+    bi = 0:1
+    corners_ = [nv+bbs .*[i,j,k] for i in bi for j in bi for k in bi]
+    corners = vec2homvec(corners_)
+
+    # final transformation
+    finalTR = zeros(4,4)
+    finalTR[4,4] = 1
+    finalTR[1:3,1:3] = evs
+    finalTR[1:3,4] = evs*meanDiagonal+c
+    ftr = SMatrix{4,4,Float64}(finalTR)
+
+    obbcorners_ = [ftr*p for p in corners]
+    return homvec2vec(obbcorners_)
 end

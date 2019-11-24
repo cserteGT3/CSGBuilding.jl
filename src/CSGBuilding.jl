@@ -19,6 +19,8 @@ using RANSAC: project2sketchplane, impldistance2segment, outwardsnormal
 # conversion
 using RANSAC: FittedPlane, FittedSphere, FittedCylinder, FittedCone, ExtractedTranslational
 using RANSAC: PointCloud, ScoredShape, ShapeCandidate
+# others
+using RANSAC: findAABB
 
 export  ImplicitResult,
         value,
