@@ -73,6 +73,14 @@ end
 
 normal(surface::ImplicitPlane, coords) = surface.normal
 
+
+"""
+    issame(x::AbstractImplicitSurface, y::AbstractImplicitSurface, α, ϵ)
+
+For any non-`ImplicitPlane` return false.
+"""
+issame(x::AbstractImplicitSurface, y::AbstractImplicitSurface, α, ϵ) = false
+
 """
     issame(pl1::ImplicitPlane, pl2::ImplicitPlane, α, ϵ)
 

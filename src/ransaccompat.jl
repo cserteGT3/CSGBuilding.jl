@@ -25,8 +25,29 @@ function toimplicit(fitted::ExtractedTranslational)
     return ImplicitTranslational(cf, segs, c, outw, flipn)
 end
 
-function scored2implicit(scored::ScoredShape, pcr::PointCloud)
+function scored2implicit(pcr::PointCloud, scored::ScoredShape)
     scored.candidate.shape isa FittedPlane && return [toimplicit(scored.candidate.shape)]
-    #TODO: OOBB -> planes
-    return [toimplicit(scored.candidate.shape)]
+    result = [toimplicit(scored.candidate.shape)]
+    inp = @view pcr.vertices[scored.inpoints]
+    _, plusplanes = findOBB(inp)
+    append!(result, plusplanes)
+    return result
+end
+
+function ransacresult2implicit(pcr::PointCloud, scored::ScoredShape)
+    implshapes = AbstractImplicitSurface[]
+    for i in eachindex(scored)
+        append!(implshapes, scored2implicit(pcr, scored))
+    end
+    toremove = falses(size(implshapes,1))
+    ϵ_burntin = 0.2
+    α_burntin = cosd(5)
+    for i in eachindex(implshapes)
+        for j in i+1:last(implshapes)
+            issame(implshapes[i], implshapes[j]) || continue
+            toremove[j] = true
+        end
+    end
+    deleteat!(implshapes, toremove)
+    return implshapes
 end

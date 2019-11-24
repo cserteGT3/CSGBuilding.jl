@@ -52,7 +52,8 @@ export  writeparaviewformat,
 
 export  centroid,
         findOBB,
-        issame
+        issame,
+        ransacresult2implicit
 
 export  CSGGeneticBuildParameters,
         rankpopulation,
