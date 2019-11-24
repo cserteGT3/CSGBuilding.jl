@@ -190,8 +190,8 @@ struct ImplicitTranslational <: AbstractImplicitSurface
 end
 
 function evaluate(surface::ImplicitTranslational, coords)
-    proj = project2sketchplane(coords, surface.coordframe)
-    d, i = impldistance2segment(proj, surface)
+    proj = project2sketchplane([coords], surface.coordframe)
+    d, i = impldistance2segment(proj[1], surface)
     return ImplicitResult(surface, d, 1)
 end
 
