@@ -1,8 +1,8 @@
 module CSGBuilding
 
 using AbstractTrees
-using LinearAlgebra: dot, norm, normalize
-using StaticArrays: SVector
+using LinearAlgebra: dot, norm, normalize, eigvecs, cross
+using StaticArrays: SVector, SMatrix
 using Random
 using Parameters
 using Logging
