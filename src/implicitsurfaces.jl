@@ -75,21 +75,22 @@ normal(surface::ImplicitPlane, coords) = surface.normal
 
 
 """
-    issame(x::AbstractImplicitSurface, y::AbstractImplicitSurface, α, ϵ)
+    issame(x::AbstractImplicitSurface, y::AbstractImplicitSurface, params)
 
 For any non-`ImplicitPlane` return false.
 """
-issame(x::AbstractImplicitSurface, y::AbstractImplicitSurface, α, ϵ) = false
+issame(x::AbstractImplicitSurface, y::AbstractImplicitSurface, params) = false
 
 """
-    issame(pl1::ImplicitPlane, pl2::ImplicitPlane, α, ϵ)
+    issame(pl1::ImplicitPlane, pl2::ImplicitPlane, params)
 
-Are the two planes the same? Parameters: α=cosd(5), ϵ=0.3
+Are the two planes the same? Parameters `α_conv, ϵ_conv`.
 """
-function issame(pl1::ImplicitPlane, pl2::ImplicitPlane, α, ϵ)
-    abs(dot(pl1.normal, pl2.normal)) < α && return false
+function issame(pl1::ImplicitPlane, pl2::ImplicitPlane, params)
+    @unpack α_conv, ϵ_conv = params
+    abs(dot(pl1.normal, pl2.normal)) < α_conv && return false
     d = pl1.point-pl2.point
-    abs(dot(d, pl1.normal)) > ϵ && return false
+    abs(dot(d, pl1.normal)) > ϵ_conv && return false
     return true
 end
 

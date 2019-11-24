@@ -27,27 +27,31 @@ end
 
 function scored2implicit(pcr::PointCloud, scored::ScoredShape)
     scored.candidate.shape isa FittedPlane && return [toimplicit(scored.candidate.shape)]
-    result = [toimplicit(scored.candidate.shape)]
+    result = AbstractImplicitSurface[]
+    append!(result, [toimplicit(scored.candidate.shape)])
     inp = @view pcr.vertices[scored.inpoints]
     _, plusplanes = findOBB(inp)
     append!(result, plusplanes)
     return result
 end
 
-function ransacresult2implicit(pcr::PointCloud, scored::ScoredShape)
+"""
+    ransacresult2implicit(pcr::PointCloud, scored::Array{ScoredShape,1}, param)
+
+Process ransac result shapes to implicit surfaces.
+"""
+function ransacresult2implicit(pcr, scored, params)
     implshapes = AbstractImplicitSurface[]
     for i in eachindex(scored)
-        append!(implshapes, scored2implicit(pcr, scored))
+        append!(implshapes, scored2implicit(pcr, scored[i]))
     end
     toremove = falses(size(implshapes,1))
-    ϵ_burntin = 0.2
-    α_burntin = cosd(5)
     for i in eachindex(implshapes)
-        for j in i+1:last(implshapes)
-            issame(implshapes[i], implshapes[j]) || continue
+        for j in i+1:lastindex(implshapes)
+            issame(implshapes[i], implshapes[j], params) || continue
             toremove[j] = true
         end
     end
     deleteat!(implshapes, toremove)
-    return implshapes
+    return implshapes, toremove
 end
