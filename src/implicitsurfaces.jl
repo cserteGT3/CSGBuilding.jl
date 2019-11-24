@@ -19,6 +19,8 @@ Base.min(x::ImplicitResult, y::ImplicitResult) = ifelse(isless(x.value, y.value)
 
 Base.max(x::ImplicitResult, y::ImplicitResult) = ifelse(isless(y.value, x.value), x, y)
 
+## sphere
+
 struct ImplicitSphere{T<:Real} <: AbstractImplicitSurface
     center::SVector{3,T}
     radius::T
@@ -47,6 +49,8 @@ function normal(surface::ImplicitSphere, coords)
     end
 end
 
+## plane
+
 struct ImplicitPlane{T<:Real} <: AbstractImplicitSurface
     point::SVector{3,T}
     normal::SVector{3,T}
@@ -68,6 +72,8 @@ function evaluate(surface::ImplicitPlane, coords)
 end
 
 normal(surface::ImplicitPlane, coords) = surface.normal
+
+## cylinder
 
 struct ImplicitCylinder{T<:Real} <: AbstractImplicitSurface
     axis::SVector{3,T}
@@ -112,3 +118,33 @@ function Base.show(io::IO, surface::ImplicitCylinder)
     return print(io, "ImplCylinder: R$(surface.radius)")
 end
 _name(surface::ImplicitCylinder) = "Cylinder"
+
+## cone
+
+struct ImplicitCone{T<:Real} <: AbstractImplicitSurface
+    apex::SVector{3,T}
+    axis::SVector{3,T}
+    opang::T
+end
+
+function ImplicitCone(apex::AbstractArray, axis::AbstractArray, opang)
+    T = promote_type(eltype(apex), eltype(axis), typeof(opang))
+    nap = convert(SVector{3, T}, apex)
+    nax = convert(SVector{3, T}, axis)
+    return ImplicitCone(nap, nax, convert(T, radius))
+end
+
+function evaluate(surface::ImplicitCone, coords)
+    d, _ = project2cone(surface)
+    return ImplicitResult(surface, d, 1)
+end
+
+function normal(surface::ImplicitCone, coords)
+    _, n = project2cone(surface)
+    return n
+end
+
+function Base.show(io::IO, surface::ImplicitCone)
+    return print(io, "ImplCone: op:$(rad2deg(surface.opang)°)")
+end
+_name(surface::ImplicitCone) = "Cone"

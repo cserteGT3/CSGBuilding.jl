@@ -12,6 +12,7 @@ using GeometryTypes: normals, vertices
 using MeshIO
 using FileIO: load
 using Base: Semaphore, acquire, release
+using RANSAC: project2cone
 
 export  ImplicitResult,
         value,
@@ -19,6 +20,7 @@ export  ImplicitResult,
         ImplicitSphere,
         ImplicitPlane,
         ImplicitCylinder,
+        ImplicitCone,
         evaluate
 
 export  CSGNode,
