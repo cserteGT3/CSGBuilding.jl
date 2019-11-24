@@ -69,6 +69,24 @@ function homvec2vec(ps)
     return [SVector{3,Float64}(p[1:3]) for p in ps]
 end
 
+"""
+    fit3pointimplplane(points)
+
+Fit an `ImplicitPlane` to 3 points. First is used as one point of the plane.
+"""
+function fit3pointimplplane(points)
+    v1 = normalize(points[2]-points[1])
+    v2 = normalize(points[3]-points[1])
+    n = normalize(cross(v1, v2))
+    return ImplicitPlane(points[1], n)
+end
+
+"""
+    findOBB(points)
+
+Compute the oriented bounding box of points (in 3D).
+Return the cornerpoints and the 6 planes (as `ImplicitPlane`s).
+"""
 function findOBB(points)
     c = centroid(points)
     m = normedcovmat(points, c)
@@ -105,5 +123,11 @@ function findOBB(points)
     ftr = SMatrix{4,4,Float64}(finalTR)
 
     obbcorners_ = [ftr*p for p in corners]
-    return homvec2vec(obbcorners_)
+    obbcorners = homvec2vec(obbcorners_)
+
+    # points are selected so that the normals point outside from the cube
+    planetris = [[1,5,2], [1,2,3], [1,3,5],
+                [8,4,6], [8,6,7], [8,7,4]]
+    planes = [fit3pointimplplane(obbcorners[i]) for i in planetris]
+    return obbcorners, planes
 end

@@ -50,7 +50,9 @@ export  tree2func
 export  writeparaviewformat,
         readobj
 
-export  centroid
+export  centroid,
+        findOBB,
+        issame
 
 export  CSGGeneticBuildParameters,
         rankpopulation,

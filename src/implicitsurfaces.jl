@@ -73,6 +73,18 @@ end
 
 normal(surface::ImplicitPlane, coords) = surface.normal
 
+"""
+    issame(pl1::ImplicitPlane, pl2::ImplicitPlane, α, ϵ)
+
+Are the two planes the same? Parameters: α=cosd(5), ϵ=0.3
+"""
+function issame(pl1::ImplicitPlane, pl2::ImplicitPlane, α, ϵ)
+    abs(dot(pl1.normal, pl2.normal)) < α && return false
+    d = pl1.point-pl2.point
+    abs(dot(d, pl1.normal)) > ϵ && return false
+    return true
+end
+
 ## cylinder
 
 struct ImplicitCylinder{T<:Real} <: AbstractImplicitSurface
