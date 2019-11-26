@@ -191,14 +191,14 @@ end
 
 function evaluate(surface::ImplicitTranslational, coords)
     proj = project2sketchplane([coords], surface.coordframe)
-    d, i = impldistance2segment(proj[1], surface)
+    d, _, _ = dn2shape_outw(proj[1], surface)
     return ImplicitResult(surface, d, 1)
 end
 
 function normal(surface::ImplicitTranslational, coords)
-    proj = project2sketchplane(coords, surface.coordframe)
-    _, i = impldistance2segment(proj, surface)
-    return outwardsnormal(surface, i)
+    proj = project2sketchplane([coords], surface.coordframe)
+    _, n, _ = dn2shape_outw(proj[1], surface)
+    return n
 end
 
 function Base.show(io::IO, surface::ImplicitTranslational)

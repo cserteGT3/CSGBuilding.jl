@@ -15,7 +15,7 @@ using Base: Semaphore, acquire, release
 # cone
 using RANSAC: project2cone
 # translational
-using RANSAC: project2sketchplane, impldistance2segment, outwardsnormal
+using RANSAC: project2sketchplane, dn2shape_outw, outwardsnormal
 # conversion
 using RANSAC: FittedPlane, FittedSphere, FittedCylinder, FittedCone, ExtractedTranslational
 using RANSAC: PointCloud, ScoredShape, ShapeCandidate
