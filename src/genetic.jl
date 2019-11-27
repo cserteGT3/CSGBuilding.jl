@@ -100,7 +100,15 @@ function tournament(params)
     return tourn[1]
 end
 
-function rawscorefunc(tree, cpoints, cnormals, normals, params)
+function projectnormal(res::CachedResult, surfaces, n)
+    pl = surfaces[res.index]
+    cf = pl.coordframe
+    n_ = SVector{2,Float64}(dot(cf[1],n), dot(cf[2],n))
+    resn = res.signint*n_
+    return resn
+end
+
+function rawscorefunc(tree, surfaces, cpoints, cnormals, normals, params)
     @unpack ϵ_d, α = params
     # λ should be unpacked?
     λ = log(size(cpoints, 1))
@@ -111,7 +119,13 @@ function rawscorefunc(tree, cpoints, cnormals, normals, params)
         v = value(res)
         n = normal(res, cnormals, i)
         d_i = v/ϵ_d
-        ddot = dot(n, normals[i])
+        #TODO: this is not really safe :D 
+        if size(n,1) == 2
+            n_comp = projectnormal(res, surfaces, normals[i])
+            ddot = dot(n, n_comp)
+        else
+            ddot = dot(n, normals[i])
+        end
         ddot = ddot > 1 ? one(ddot) : ddot
         ddot = ddot < -1 ? -1*one(ddot) : ddot
         #ddot = boundbetweenone(ddot)
@@ -135,7 +149,7 @@ function boundbetweenone(x)
 end
 =#
 
-function rankcachedpopulationfunc(population, cpoints, cnormals, normals, params)
+function rankcachedpopulationfunc(population, surfaces, cpoints, cnormals, normals, params)
     sum = 0.
     score = Array{Float64,1}(undef, size(population))
     normed = similar(score)
@@ -143,7 +157,7 @@ function rankcachedpopulationfunc(population, cpoints, cnormals, normals, params
     #smphr = Semaphore(1)
     #@threads for i in eachindex(population)
     for i in eachindex(population)
-        score[i] = rawscorefunc(population[i], cpoints, cnormals, normals, params)
+        score[i] = rawscorefunc(population[i], surfaces, cpoints, cnormals, normals, params)
     end
     #=
     for i in eachindex(score)
@@ -173,7 +187,7 @@ function cachedfuncgeneticbuildtree(surfaces, points, normals, params)
         if i%notifit == 0
             @info "$i-th iteration"
         end
-        population, nsc = rankcachedpopulationfunc(population, cvalues, cnormals, normals, params)
+        population, nsc = rankcachedpopulationfunc(population, surfaces, cvalues, cnormals, normals, params)
         #@debug "ranked population: $i. iteration"
         @debug "$i it - best score: $nsc"
         # save the best
