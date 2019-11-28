@@ -7,7 +7,8 @@ function rawscore(tree::CSGNode, points, normals, params)
     for i in eachindex(points)
         v, n = valueandnormal(tree, points[i])
         d_i = v/ϵ_d
-        θ_i = acos(dot(n, normals[i]))/α
+        ddot = clamp(dot(n, normals[i]), -1, 1)
+        θ_i = acos(ddot)/α
         score += exp(-d_i^2) + exp(-θ_i^2)
     end
     return score - λ*treesize(tree)
@@ -125,7 +126,8 @@ function rawscorecached(tree, cpoints, cnormals, normals, params)
     for i in eachindex(cpoints)
         v, n = valueandnormal(tree, cpoints, cnormals, i)
         d_i = v/ϵ_d
-        θ_i = acos(dot(n, normals[i]))/α
+        ddot = clamp(dot(n, normals[i]), -1, 1)
+        θ_i = acos(ddot)/α
         score += exp(-d_i^2) + exp(-θ_i^2)
     end
     return score - λ*treesize(tree)

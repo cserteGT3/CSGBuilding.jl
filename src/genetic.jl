@@ -119,35 +119,19 @@ function rawscorefunc(tree, surfaces, cpoints, cnormals, normals, params)
         v = value(res)
         n = normal(res, cnormals, i)
         d_i = v/ϵ_d
-        #TODO: this is not really safe :D 
+        #TODO: this is not really safe :D
         if size(n,1) == 2
             n_comp = projectnormal(res, surfaces, normals[i])
             ddot = dot(n, n_comp)
         else
             ddot = dot(n, normals[i])
         end
-        ddot = ddot > 1 ? one(ddot) : ddot
-        ddot = ddot < -1 ? -1*one(ddot) : ddot
-        #ddot = boundbetweenone(ddot)
+        ddot = clamp(ddot, -1, 1)
         θ_i = acos(ddot)/α
         score += exp(-d_i^2) + exp(-θ_i^2)
     end
     return score - λ*treesize(tree)
 end
-
-#=
-function boundbetweenone(x)
-    if x < -1
-        @debug "$x < -1"
-        return -1*one(x)
-    elseif x > 1
-        @debug "$x > 1"
-        return one(x)
-    else
-        return x
-    end
-end
-=#
 
 function rankcachedpopulationfunc(population, surfaces, cpoints, cnormals, normals, params)
     sum = 0.
