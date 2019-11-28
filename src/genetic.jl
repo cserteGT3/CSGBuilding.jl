@@ -168,12 +168,10 @@ function cachedfuncgeneticbuildtree(surfaces, points, normals, params)
     start_time = time_ns()
     @info "Iteration in progress..."
     for i in 1:itermax
-        if i%notifit == 0
-            @info "$i-th iteration"
-        end
         population, nsc = rankcachedpopulationfunc(population, surfaces, cvalues, cnormals, normals, params)
-        #@debug "ranked population: $i. iteration"
-        @debug "$i it - best score: $nsc"
+        if i%notifit == 0
+            @info "$i-th iteration - best score: $nsc"
+        end
         # save the best
         npopulation[1:keepbestn] = population[1:keepbestn]
         n = keepbestn+1
