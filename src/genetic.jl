@@ -161,7 +161,7 @@ end
 
 function cachedfuncgeneticbuildtree(surfaces, points, normals, params)
     @unpack itermax, maxdepth, populationsize = params
-    @unpack keepbestn = params
+    @unpack keepbestn, rungc = params
     notifit = itermax > 10 ? div(itermax,10) : 1
     cnodes, cvalues, cnormals = cachenodes(surfaces, points)
     population = [randomcachedtree(cnodes, maxdepth) for _ in 1:populationsize]
