@@ -14,6 +14,7 @@
     # tournament selection
     tournamentsize::Int = 30
     selectionprob = 0.5
+    rungc::Bool = false
 end
 
 function crossover(creatures, params)
@@ -171,6 +172,9 @@ function cachedfuncgeneticbuildtree(surfaces, points, normals, params)
         population, nsc = rankcachedpopulationfunc(population, surfaces, cvalues, cnormals, normals, params)
         if i%notifit == 0
             @info "$i-th iteration - best score: $nsc"
+            if rungc
+                GC.gc()
+            end
         end
         # save the best
         npopulation[1:keepbestn] = population[1:keepbestn]
