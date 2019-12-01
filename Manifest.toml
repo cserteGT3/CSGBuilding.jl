@@ -78,14 +78,11 @@ git-tree-sha1 = "3e01e12c4c626578a9d47fac0d15c9fe8dad5139"
 uuid = "7269a6da-0436-5bbc-96c2-40638cbb6118"
 version = "0.3.1"
 
-[[Mmap]]
-uuid = "a63ad114-7e13-5084-954f-fe012c677804"
-
 [[NearestNeighbors]]
-deps = ["Distances", "LinearAlgebra", "Mmap", "StaticArrays", "Test"]
-git-tree-sha1 = "f47c5d97cf9a8caefa47e9fa9d99d8fda1a65154"
+deps = ["Distances", "StaticArrays"]
+git-tree-sha1 = "8bc6180f328f3c0ea2663935db880d34c57d6eae"
 uuid = "b8a86587-4115-5ab1-83bc-aa920d37bbce"
-version = "0.4.3"
+version = "0.4.4"
 
 [[OrderedCollections]]
 deps = ["Random", "Serialization", "Test"]
@@ -109,7 +106,7 @@ uuid = "de0858da-6303-5e67-8744-51eddeeeb8d7"
 
 [[RANSAC]]
 deps = ["LinearAlgebra", "Logging", "NearestNeighbors", "Parameters", "Random", "RegionTrees", "StaticArrays", "UnionFind"]
-git-tree-sha1 = "0ea9130af5a11fef2be4f6ba3cecbd9b83d7baeb"
+git-tree-sha1 = "36d7ff69b22cc39c83b55cbd3e928b14f66afe7a"
 repo-rev = "master"
 repo-url = "https://github.com/cserteGT3/RANSAC.jl"
 uuid = "d6bc97e0-a563-11e9-1861-c573f65f3bc3"
@@ -124,10 +121,10 @@ deps = ["Serialization"]
 uuid = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 
 [[RegionTrees]]
-deps = ["IterTools", "LinearAlgebra", "StaticArrays", "Test"]
-git-tree-sha1 = "2b53f2cbfc7dff34e0e4feed12da7ad85f738c13"
+deps = ["IterTools", "LinearAlgebra", "StaticArrays"]
+git-tree-sha1 = "763ea91022b03c1ff18d5c80d61f676419fb7505"
 uuid = "dee08c22-ab7f-5625-9660-a9af2021b33f"
-version = "0.2.0"
+version = "0.3.0"
 
 [[SHA]]
 uuid = "ea8e919c-243c-51af-8825-aaa63cd721ce"
@@ -144,9 +141,10 @@ uuid = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
 
 [[StaticArrays]]
 deps = ["LinearAlgebra", "Random", "Statistics"]
-git-tree-sha1 = "5a3bcb6233adabde68ebc97be66e95dcb787424c"
+git-tree-sha1 = "1085ffbf5fd48fdba64ef8e902ca429c4e1212d3"
+pinned = true
 uuid = "90137ffa-7385-5640-81b9-e52037218182"
-version = "0.12.1"
+version = "0.11.1"
 
 [[Statistics]]
 deps = ["LinearAlgebra", "SparseArrays"]
