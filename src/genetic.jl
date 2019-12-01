@@ -202,5 +202,5 @@ function cachedfuncgeneticbuildtree(surfaces, points, normals, params)
     end
     fint = trunc((time_ns() - start_time)/1_000_000_000, digits=2)
     @info "Finished: $itermax iteration in $fint seconds."
-    return population, cached2normaltree(population[1], surfaces)
+    return population, cached2normaltree(population[1], surfaces), fint
 end
