@@ -21,6 +21,9 @@ using RANSAC: FittedPlane, FittedSphere, FittedCylinder, FittedCone, ExtractedTr
 using RANSAC: PointCloud, ScoredShape, ShapeCandidate
 # others
 using RANSAC: findAABB
+# visualize and write
+import JSON
+
 
 export  ImplicitResult,
         value,
@@ -48,6 +51,8 @@ export  CachedSurface,
 export  tree2func
 
 export  writeparaviewformat,
+        toNiceTree,
+        toJSON,
         readobj
 
 export  centroid,

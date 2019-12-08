@@ -43,3 +43,39 @@ function readobj(fname, scaletuple)
     ns = -1 .* normalize.(normals(m))
     return vs, ns
 end
+
+struct NiceTree{A<:AbstractArray}
+    data::String
+    children::A
+end
+
+# write to nicer format
+AbstractTrees.children(tree::NiceTree) = tree.children
+AbstractTrees.printnode(io::IO, tree::NiceTree) = print(io, tree.data)
+
+function toNiceTree(node::CachedCSGNode)
+    if isempty(node.children)
+        return NiceTree(_name(node.data), [])
+    else
+        op = node.data
+        cs = node.children
+        if op === :complement
+            return NiceTree(string(op), [toNiceTree(cs[1])])
+        else
+            return NiceTree(string(op), [toNiceTree(cs[1]), toNiceTree(cs[2])])
+        end
+    end
+end
+
+# export to JSON
+
+function toJSON(fname, tree)
+    try
+        open(fname, "w") do io
+            println(io, JSON.json(tree))
+        end
+    catch e
+        @show e
+    end
+    return nothing
+end

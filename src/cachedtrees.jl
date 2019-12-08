@@ -4,6 +4,7 @@ struct CachedSurface
 end
 
 Base.show(io::IO, surface::CachedSurface) = print(io, surface.name)
+_name(s::CachedSurface) = s.name
 
 struct CachedResult
     value::Float64
