@@ -71,6 +71,9 @@ export  CSGGeneticBuildParameters,
 export  toimplicit,
         scored2implicit
 
+export  tree2tex,
+        json2tex
+
 include("implicitsurfaces.jl")
 include("csgtrees.jl")
 include("cachedtrees.jl")
@@ -81,5 +84,6 @@ include("orientedbox.jl")
 include("genetic.jl")
 include("deprecated.jl")
 include("ransaccompat.jl")
+include("textree.jl")
 
 end # module
