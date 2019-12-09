@@ -27,6 +27,11 @@ function valueandnormal(tree::CSGNode, coords)
     return (value(val), n)
 end
 
+# compatibility for dual contouring
+function isosurface(tree::CSGNode, isolevel, bounding_box, resolution; df=nothing)
+    isosurface(p->value(evaluate(tree, p)), isolevel, bounding_box, resolution; df=df)
+end
+
 function depth(tree::AbstractCSGNode)
     childs = collect(children(tree))
     i = 0

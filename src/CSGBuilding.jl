@@ -74,6 +74,10 @@ export  toimplicit,
 export  tree2tex,
         json2tex
 
+export  isosurface,
+        writeOBJ
+
+
 include("implicitsurfaces.jl")
 include("csgtrees.jl")
 include("cachedtrees.jl")
@@ -85,5 +89,6 @@ include("genetic.jl")
 include("deprecated.jl")
 include("ransaccompat.jl")
 include("textree.jl")
+include("dual_contour.jl")
 
 end # module
