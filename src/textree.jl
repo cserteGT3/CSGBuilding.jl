@@ -40,7 +40,8 @@ function tree2tex(tree, outfile, preamble=true)
             println(io, """
                         \\begin{figure}[h]""")
         end
-        println(io, "   \\begin{forest}")
+        println(io, """    \\centering
+                            \\begin{forest}""")
         println(io, "   ",dict2tex(js))
         println(io, "   \\end{forest}")
         if preamble
