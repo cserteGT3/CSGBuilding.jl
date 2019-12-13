@@ -39,6 +39,7 @@ export  CSGNode,
         valueandnormal,
         depth,
         treesize,
+        evaldistance,
         randomtree
 
 export  CachedSurface,

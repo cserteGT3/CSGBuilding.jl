@@ -97,3 +97,17 @@ function randomtree(surfaces, maxdepth::Int)
     @assert maxdepth > 0 "Maximum depth should be at least 1!"
     return make(surfaces, maxdepth)
 end
+
+"""
+    evaldistance(tree::CSGNode, points)
+
+Compute the sum of squared distances to the surface of the `tree` from every point of `points`.
+"""
+function evaldistance(tree::CSGNode, points)
+    sum = 0.0
+    for p in points
+        d = value(evaluate(tree, p))
+        sum+=d^2
+    end
+    return sum
+end
