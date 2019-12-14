@@ -166,6 +166,7 @@ function cachedfuncgeneticbuildtree(surfaces, points, normals, params)
     cnodes, cvalues, cnormals = cachenodes(surfaces, points)
     population = [randomcachedtree(cnodes, maxdepth) for _ in 1:populationsize]
     npopulation = similar(population)
+    scores = zeros(itermax)
     start_time = time_ns()
     @info "Iteration in progress..."
     for i in 1:itermax
@@ -176,6 +177,7 @@ function cachedfuncgeneticbuildtree(surfaces, points, normals, params)
                 GC.gc()
             end
         end
+        scores[i] = nsc
         # save the best
         npopulation[1:keepbestn] = population[1:keepbestn]
         n = keepbestn+1
@@ -202,5 +204,5 @@ function cachedfuncgeneticbuildtree(surfaces, points, normals, params)
     end
     fint = trunc((time_ns() - start_time)/1_000_000_000, digits=2)
     @info "Finished: $itermax iteration in $fint seconds."
-    return population, cached2normaltree(population[1], surfaces), fint
+    return population, cached2normaltree(population[1], surfaces), fint, scores
 end
