@@ -54,6 +54,7 @@ export  tree2func
 export  writeparaviewformat,
         toNiceTree,
         toJSON,
+        rmse,
         readobj
 
 export  centroid,

@@ -79,3 +79,5 @@ function toJSON(fname, tree)
     end
     return nothing
 end
+
+rmse(n, ps) = sqrt((evaldistance(n, ps)/length(ps)))
