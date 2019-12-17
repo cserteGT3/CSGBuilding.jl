@@ -93,8 +93,8 @@ function pairthem(a, b, p)
         end
     end
     na = CSGBuilding._name.(a)
-    anames = [na[i]*string(pairing[i][1]) for i in eachindex(na)]
-    bnames = [na[i]*string(pairing[i][2]) for i in eachindex(na)]
+    anames = [na[i]*string(pairing[i][1])*" " for i in eachindex(na)]
+    bnames = [na[i]*string(pairing[i][2])*" " for i in eachindex(na)]
 
     syms = [string(gensym()) for _ in eachindex(na)]
     # 'name a' -> 'sym'
