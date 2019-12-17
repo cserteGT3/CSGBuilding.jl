@@ -57,13 +57,9 @@ function ransacresult2implicit(pcr, scored, params)
 end
 
 function scored2implicit_ordered(pcr::PointCloud, scored::ScoredShape)
-    #scored.candidate.shape isa FittedPlane && return [toimplicit(scored.candidate.shape)]
-    result = AbstractImplicitSurface[]
-    #append!(result, [toimplicit(scored.candidate.shape)])
     inp = @view pcr.vertices[scored.inpoints]
     _, plusplanes = findOBB(inp)
-    append!(result, plusplanes)
-    return result
+    return plusplanes
 end
 
 function ransacresult2implicit_ordered(pcr, scored, params)
@@ -71,7 +67,7 @@ function ransacresult2implicit_ordered(pcr, scored, params)
     append!(implshapes, [toimplicit(s.candidate.shape) for s in scored])
     for i in eachindex(scored)
         scored[i].candidate.shape isa FittedPlane && continue
-        append!(implshapes, scored2implicit(pcr, scored[i]))
+        append!(implshapes, scored2implicit_ordered(pcr, scored[i]))
     end
     toremove = falses(size(implshapes,1))
     for i in eachindex(implshapes)
@@ -82,4 +78,21 @@ function ransacresult2implicit_ordered(pcr, scored, params)
     end
     deleteat!(implshapes, toremove)
     return implshapes, toremove
+end
+
+function pairthem(a, b, p)
+    pairing = []
+    for i in 1:size(a,1)
+        for j in 1:size(b,1)
+            if a[i] == b[j]
+                push!(pairing, [i, j])
+            elseif CSGBuilding.issame(a[i], b[j], p)
+                push!(pairing, [i, j])
+            end
+        end
+    end
+    na = CSGBuilding._name.(a)
+    nb = CSGBuilding._name.(b)
+    pname = [na[p[1]]*"$(p[1])"=>nb[p[2]]*"$(p[2])" for p in pairing]
+    pairing, pname
 end

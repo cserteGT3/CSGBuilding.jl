@@ -74,6 +74,7 @@ export  toimplicit,
         scored2implicit
 
 export  tree2tex,
+        tree2tex_orderfix,
         json2tex
 
 export  isosurface,
