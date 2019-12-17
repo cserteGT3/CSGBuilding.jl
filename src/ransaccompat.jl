@@ -81,6 +81,7 @@ function ransacresult2implicit_ordered(pcr, scored, params)
 end
 
 function pairthem(a, b, p)
+    @assert size(a) == size(b)
     pairing = []
     for i in 1:size(a,1)
         for j in 1:size(b,1)
@@ -92,7 +93,13 @@ function pairthem(a, b, p)
         end
     end
     na = CSGBuilding._name.(a)
-    nb = CSGBuilding._name.(b)
-    pname = [na[p[1]]*"$(p[1])"=>nb[p[2]]*"$(p[2])" for p in pairing]
-    pairing, pname
+    anames = [na[i]*string(pairing[i][1]) for i in eachindex(na)]
+    bnames = [na[i]*string(pairing[i][2]) for i in eachindex(na)]
+
+    syms = [string(gensym()) for _ in eachindex(na)]
+    # 'name a' -> 'sym'
+    asym = [anames[i]=>syms[i] for i in eachindex(anames)]
+    # 'sym' -> 'name b'
+    symb = [syms[i]=>bnames[i] for i in eachindex(anames)]
+    pairing, asym, symb
 end

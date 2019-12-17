@@ -52,8 +52,11 @@ function tree2tex_orderfix(tree::CachedCSGNode, outfile, pc, extr, convp; preamb
     #order fix
     impls2, _ = ransacresult2implicit(pc, extr, convp)
     impls2o, _ = ransacresult2implicit_ordered(pc, extr, convp)
-    _, pairn = pairthem(impls2, impls2o, convp)
-    for p in pairn
+    _, p12, p23 = pairthem(impls2, impls2o, convp)
+    for p in p12
+        treestr = replace(treestr, p)
+    end
+    for p in p23
         treestr = replace(treestr, p)
     end
     open(outfile, "w") do io
